@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.UI;
 using static MiningScript;
@@ -12,122 +14,98 @@ public class BlackSmithPanelScripts : MonoBehaviour
 
     public Text MoneyText;
 
+    public Text OreCountCoal;
+    public Text OreCountCopper;
+    public Text OreCountIron;
+    public Text OreCountGold;
+    public Text OreCountRedstone;
+    public Text OreCountDiamond;
+
+    public Dictionary<string, Text> OreCounters = new Dictionary<string, Text>        {
+            { OreNames.COAL, null },
+            { OreNames.COPPER, null },
+            { OreNames.IRON, null },
+            { OreNames.GOLD, null },
+            { OreNames.DIAMOND, null },
+            { OreNames.LAPIS, null },
+            { OreNames.REDSTONE, null },
+            { OreNames.EMERALD, null },
+            { OreNames.QUARTZ, null },
+        };
+
+        
+
     private Dictionary<string, int> OrePrices = new Dictionary<string, int>
-    {
-        { OreNames.COAL, 1 },
-        { OreNames.COPPER, 2 },
-        { OreNames.IRON, 3 },
-        { OreNames.GOLD, 4 },
-        { OreNames.DIAMOND, 5 },
-        { OreNames.LAPIS, 6 },
-        { OreNames.REDSTONE, 7 },
-        { OreNames.EMERALD, 8 },
-        { OreNames.QUARTZ, 9 },
-    };
+        {
+            { OreNames.COAL, 1 },
+            { OreNames.COPPER, 2 },
+            { OreNames.IRON, 4 },
+            { OreNames.GOLD, 10 },
+            { OreNames.REDSTONE, 20 },
+            { OreNames.DIAMOND, 50 },
+            { OreNames.LAPIS, 6 },
+            { OreNames.EMERALD, 8 },
+            { OreNames.QUARTZ, 9 },
+        };
 
-    public void OnClickSellCoal()
+    private void sellOre(string oreName)
     {   
-        if (GetOre(OreNames.COAL) > 0)
+        if (GetOre(oreName) > 0)
         {
-            Money += GetOre(OreNames.COAL) * OrePrices[OreNames.COAL];
-            SetOre(OreNames.COAL, 0);
+            OnMoneyChanged?.Invoke(Money + GetOre(oreName) * OrePrices[oreName]);
+            OnInventoryChanged?.Invoke(oreName, 0);
         }
     }
 
-    public void OnClickSellIron()
-    {
-        if (GetOre(OreNames.IRON) > 0)
-        {
-            Money += GetOre(OreNames.IRON) * OrePrices[OreNames.IRON];
-            SetOre(OreNames.IRON, 0);
-        }
-    }
+    public void OnClickSellCoal() => sellOre(OreNames.COAL);
 
-    public void OnClickSellGold()
-    {
-        if (GetOre(OreNames.GOLD) > 0)
-        {
-            Money += GetOre(OreNames.GOLD) * OrePrices[OreNames.GOLD];
-            SetOre(OreNames.GOLD, 0);
-        }
-    }
+    public void OnClickSellIron() => sellOre(OreNames.IRON);
 
-    public void OnClickSellCopper()
-    {
-        if (GetOre(OreNames.COPPER) > 0)
-        {
-            Money += GetOre(OreNames.COPPER) * OrePrices[OreNames.COPPER];
-            SetOre(OreNames.COPPER, 0);
-        }
-    }
+    public void OnClickSellGold() => sellOre(OreNames.GOLD);
 
-    public void OnClickSellDiamond()
-    {
-        if (GetOre(OreNames.DIAMOND) > 0)
-        {
-            Money += GetOre(OreNames.DIAMOND) * OrePrices[OreNames.DIAMOND];
-            SetOre(OreNames.DIAMOND, 0);
-        }
-    }
+    public void OnClickSellCopper() => sellOre(OreNames.COPPER);
 
+    public void OnClickSellDiamond() => sellOre(OreNames.DIAMOND);
 
+    public void OnClickSellEmerald() => sellOre(OreNames.EMERALD);
 
-    public void OnClickSellEmerald()
-    {
-        if (GetOre(OreNames.EMERALD) > 0)
-        {
-            Money += GetOre(OreNames.EMERALD) * OrePrices[OreNames.EMERALD];
-            SetOre(OreNames.EMERALD, 0);
-        }
-    }
+    public void OnClickSellRedstone() => sellOre(OreNames.REDSTONE);
 
-    public void OnClickSellRedstone()
-    {
-        if (GetOre(OreNames.REDSTONE) > 0)
-        {
-            Money += GetOre(OreNames.REDSTONE) * OrePrices[OreNames.REDSTONE];
-            SetOre(OreNames.REDSTONE, 0);
-        }
-    }
+    public void OnClickSellLapis() => sellOre(OreNames.LAPIS);
 
-    public void OnClickSellLapis()
-    {
-        if (GetOre(OreNames.LAPIS) > 0)
-        {
-            Money += GetOre(OreNames.LAPIS) * OrePrices[OreNames.LAPIS];
-            SetOre(OreNames.LAPIS, 0);
-        }
-    }
-
-    public void OnClickSellQuartz()
-    {
-        if (GetOre(OreNames.QUARTZ) > 0)
-        {
-            Money += GetOre(OreNames.QUARTZ) * OrePrices[OreNames.QUARTZ];
-            SetOre(OreNames.QUARTZ, 0);
-        }
-    }
+    public void OnClickSellQuartz() => sellOre(OreNames.QUARTZ);
 
     public void OnClickSellAll()
     {
-        foreach (string oreName in OreNames.names)
-        {
-            if (GetOre(oreName) <= 0) continue;
-            Money += GetOre(oreName) * OrePrices[oreName];
-            SetOre(oreName, 0);
-        }
+        foreach (string oreName in OreNames.names) sellOre(oreName);
     }
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        OnMoneyChanged += onMoneyChanged;
+        OnInventoryChanged += onInventoryChanged;
+        OreCounters[OreNames.COAL] = OreCountCoal;
+        OreCounters[OreNames.COPPER] = OreCountCopper;
+        OreCounters[OreNames.IRON] = OreCountIron;
+        OreCounters[OreNames.GOLD] = OreCountGold;
+        OreCounters[OreNames.REDSTONE] = OreCountRedstone;
+        OreCounters[OreNames.DIAMOND] = OreCountDiamond;
+    }
+    private void onMoneyChanged(int money)
+    {
+        MoneyText.text = money + "GOLD";
+    }
+
+    private void onInventoryChanged(string oreName, int amount)
+    {
+        OreCounters[oreName].text = amount.ToString();
     }
 
     // Update is called once per frame
     void Update()
     {
-        MoneyText.text = Money + "GOLD";
+      
     }
 }

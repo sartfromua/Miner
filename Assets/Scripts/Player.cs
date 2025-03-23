@@ -1,58 +1,47 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static MiningScript;
 
 public class Player : MonoBehaviour
 {
     private static Player _instance;
 
+    public static Action<int> OnMoneyChanged;
+    public static Action<string, int> OnInventoryChanged;
+    public static Action<string> OnOneOreMined;
 
-    [SerializeField] public Dictionary<string, int> _oresInventory = new Dictionary<string, int>();
+
+    private Dictionary<string, int> _oresInventory = new Dictionary<string, int>();
     [SerializeField] public int _money = 0;
+    
     public static int pickaxePower = 1;
+    public static int Money { get { return _instance._money; } }
 
     private void Awake()
     {
         _instance = this;
+        OnMoneyChanged += changeMoney;
+        OnInventoryChanged += changeInventory;
+        OnOneOreMined += oneOreMined;
     }
 
-    public static int Money
+    private void oneOreMined(string oreName)
     {
-        get
-        {
-            return _instance._money;
-        }
-        set
-        {
-            _instance._money = Mathf.Max(0, value); // Запрещаем отрицательные деньги
-        }
+        OnInventoryChanged?.Invoke(oreName, _oresInventory[oreName]+1);
     }
 
-    public static void SetOre(string oreName, int amount)
+    private void changeMoney(int money)
     {
-        if (_instance == null)
-        {
-            Debug.LogError("Player не найден на сцене!");
-            return;
-        }
+        _money = money;
+    }
 
-        if (_instance._oresInventory.ContainsKey(oreName))
-            _instance._oresInventory[oreName] = amount;
+    private void changeInventory(string oreName, int amount)
+    {
+        if (_oresInventory.ContainsKey(oreName))
+            _oresInventory[oreName] = amount;
         else
-            _instance._oresInventory.Add(oreName, amount);
-    }
-
-    public static void AddOneOre(string oreName)
-    {
-        if (_instance == null)
-        {
-            Debug.LogError("Player не найден на сцене!");
-            return;
-        }
-
-        if (_instance._oresInventory.ContainsKey(oreName))
-            _instance._oresInventory[oreName] += 1;
-        else
-            _instance._oresInventory.Add(oreName, 1);
+            _oresInventory.Add(oreName, amount);
     }
 
     public static int GetOre(string oreName)

@@ -68,7 +68,7 @@ public class MiningScript : MonoBehaviour
 
     }
 
-    private void addToInventory(Ore ore) => AddOneOre(ore.name);
+    private void addToInventory(Ore ore) => OnOneOreMined?.Invoke(ore.name);
 
     private bool NextDestroyStage()
     {
@@ -146,7 +146,7 @@ public class MiningScript : MonoBehaviour
 
         foreach (var name in OreNames.names)
         {
-            SetOre(name, 0);
+            OnInventoryChanged?.Invoke(name, 0);
         }
         
 
@@ -159,11 +159,18 @@ public class MiningScript : MonoBehaviour
     private void Start()
     {
         loadSprites();
-        Money = 1000;
+        
+        OnMoneyChanged += onMoneyChanged;
+        OnMoneyChanged?.Invoke(1000);
+    }
+
+    private void onMoneyChanged(int money)
+    {
+        MoneyText.text = money + "GOLD";
     }
 
     private void Update() {
-        MoneyText.text = Money + "GOLD";
+        
     }
 
     private class Ore

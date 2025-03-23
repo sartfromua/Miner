@@ -24,7 +24,7 @@ public class ShopPanelScripts : MonoBehaviour
     {
         if (Money >= GoodsPrices[0])
         {
-            Money -= GoodsPrices[0];
+            OnMoneyChanged?.Invoke(Money - GoodsPrices[0]);
             GoodsPrices[0] *= 2;
             pickaxePower++;
 
@@ -40,7 +40,7 @@ public class ShopPanelScripts : MonoBehaviour
     {
         if (Money >= GoodsPrices[1])
         {
-            Money -= GoodsPrices[1];
+            OnMoneyChanged?.Invoke(Money - GoodsPrices[1]);
             GoodsPrices[1] *= 2;
 
             oreLevel += 2;
@@ -55,11 +55,14 @@ public class ShopPanelScripts : MonoBehaviour
         for (int i = 0; i < GoodsPriceText.Length; i++)
         {
             GoodsPriceText[i].text = GoodsPrices[i].ToString();
+            if (GoodsPriceText[i].text.Length > 5) GoodsPriceText[i].fontSize = 60;
+            else GoodsPriceText[i].fontSize = 60;
             checkMoneyForShopPrices();
         }
 
     }
 
+    // Makes text green if u have enough or else red
     public static void checkMoneyForShopPrices()
     {
         for (int i = 0; i < _instance.GoodsPriceText.Length; i++)
@@ -86,6 +89,10 @@ public class ShopPanelScripts : MonoBehaviour
         }
     }
 
+    private void onMoneyChanged(int money)
+    {
+        MoneyText.text = money + "GOLD";
+    }
 
     private static int GetOreLevel(string ore)
     {
@@ -145,6 +152,7 @@ public class ShopPanelScripts : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        OnMoneyChanged += onMoneyChanged;
         for (int i = 0; i < GoodsPrices.Length; i++)
         {
             GoodsPriceText[i].text = GoodsPrices[i].ToString();
