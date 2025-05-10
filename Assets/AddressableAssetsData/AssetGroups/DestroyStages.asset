@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: DestroyStages
+  m_EditorClassIdentifier: 
+  m_GroupName: DestroyStages
+  m_GUID: 38f4481e2e34e8647af0dcb11e2d6f27
+  m_SerializeEntries:
+  - m_GUID: 1f1901e026e43174488e7fd0badeb377
+    m_Address: destroy_stage_3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4494a4c73e754b5439e4dea7c3e2e2d0
+    m_Address: destroy_stage_9
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45fda7835510f0c4ba1cc5b2528833a6
+    m_Address: Destroy_stage_
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5fa65ad5c60fcf744be094c46522f84c
+    m_Address: destroy_stage_5
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 67c0fed6907b7a040a9a3dfb0c48fca3
+    m_Address: destroy_stage_1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 821054bb380a5414ca0bcf6229e67d9d
+    m_Address: destroy_stage_7
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9af13cc59e9a2e8438785c796260ebfc
+    m_Address: destroy_stage_6
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a1e86b34ddfc8e544aa6eb11565ea811
+    m_Address: destroy_stage_8
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ade23f0485aa16844af87aafb697ad47
+    m_Address: destroy_stage_2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c086808e5aa51ff47ab3ddd3aeb9bd3d
+    m_Address: destroy_stage_0
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ef9dd015cc5931140b19dac4d2d4de4a
+    m_Address: destroy_stage_4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 7d8076f1f494eec47bf9064f4f889d8f, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: f42c08dbe5f78f64185537fd5d72d674, type: 2}
+    - {fileID: 11400000, guid: b3c9f860e6a69614885cfb21065730e8, type: 2}

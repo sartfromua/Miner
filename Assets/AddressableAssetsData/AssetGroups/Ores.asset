@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Ores
+  m_EditorClassIdentifier: 
+  m_GroupName: Ores
+  m_GUID: 0e72fd7fa2d356b4a80d9ef3106ca1b5
+  m_SerializeEntries:
+  - m_GUID: 07f0c50129d42ea428000bf1d3286700
+    m_Address: coal_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 08a14469578fe8b4f99831ffa028b1ca
+    m_Address: deepslate_emerald_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 09033586510d63d4f9a1122fee268c41
+    m_Address: deepslate_diamond_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 14acddded52e15d4082b860b12c71149
+    m_Address: deepslate_gold_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c25d7c6e60326940b2a4769bf7e8866
+    m_Address: deepslate_copper_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e842ac7e55bc0e45b3825fd9db80e79
+    m_Address: iron_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3060ed945bb436d40801d0bd1afc8fe1
+    m_Address: emerald_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a6ab89c91d504141afe8e9cd015568c
+    m_Address: deepslate_coal_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55529918f9215e548bce246d8d141486
+    m_Address: diamond_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7bd36510f77f90f4080b1d6b696b9fa8
+    m_Address: deepslate_lapis_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82a479d496b908b4db704a7c61f49684
+    m_Address: deepslate_iron_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8766cd9e9a24e814ea934fddb7fc4bd1
+    m_Address: gold_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8cc0900198e71c14ebee693a898a670d
+    m_Address: nether_gold_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8f98f24f48c9f6c459a45a5bf311ae18
+    m_Address: lapis_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 946b0998fe1925a4c8c5c36d1cf8defc
+    m_Address: redstone_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c3cb45191b52ee549a6661d1c9eeeb00
+    m_Address: deepslate_redstone_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e0fa527bb657c4640af13717e40b32c6
+    m_Address: nether_quartz_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f05a9e0e4f9a519469170ffcb3f9cb5b
+    m_Address: copper_ore
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 7d8076f1f494eec47bf9064f4f889d8f, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: d8126ea7bd1a03145851d393a00fe4b7, type: 2}
+    - {fileID: 11400000, guid: 0c82c696530041342a9ca824f4514f0d, type: 2}
