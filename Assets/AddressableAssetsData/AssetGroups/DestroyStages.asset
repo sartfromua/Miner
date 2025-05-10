@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: DestroyStages
+  m_EditorClassIdentifier: 
+  m_GroupName: DestroyStages
+  m_GUID: 38f4481e2e34e8647af0dcb11e2d6f27
+  m_SerializeEntries: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 7d8076f1f494eec47bf9064f4f889d8f, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: f42c08dbe5f78f64185537fd5d72d674, type: 2}
+    - {fileID: 11400000, guid: b3c9f860e6a69614885cfb21065730e8, type: 2}
