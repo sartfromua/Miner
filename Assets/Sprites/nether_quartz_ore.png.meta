@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      nether_quartz_ore_0: -4656069293051672461
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

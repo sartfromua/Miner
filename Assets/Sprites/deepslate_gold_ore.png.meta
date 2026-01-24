@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      deepslate_gold_ore_0: 1004814280390142993
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

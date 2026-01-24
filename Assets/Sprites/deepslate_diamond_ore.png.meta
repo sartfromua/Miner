@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      deepslate_diamond_ore_0: 3427604410878684326
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
