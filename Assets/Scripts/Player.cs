@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
 
     public static Save makeSave()
     {
-        Save sv = new Save();
+        var sv = new Save();
         sv.money = Money;
         sv.oreLevel = oreLevel;
         sv.furnaceLevel = furnaceLevel;
@@ -154,19 +154,19 @@ public class Player : MonoBehaviour
 
     public static int GetOre(string oreName)
     {
-        if (_instance._oresInventory.TryGetValue(oreName, out int amount))
+        if (_instance._oresInventory.TryGetValue(oreName, out var amount))
         {
             return amount;
         }
-        return 0; // Если руды нет, возвращаем 0
+        return 0; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 0
     }
 
     public static int GetRefined(string oreName)
     {
-        if (_instance._refinedInventory.TryGetValue(oreName, out int amount))
+        if (_instance._refinedInventory.TryGetValue(oreName, out var amount))
         {
             return amount;
         }
-        return 0; // Если руды нет, возвращаем 0
+        return 0; // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 0
     }
 }

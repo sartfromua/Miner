@@ -113,7 +113,7 @@ public class MiningScript : MonoBehaviour
 
     private void ChooseRandomOre()
     {   
-        string oreName = GetRandomOreName();
+        var oreName = GetRandomOreName();
         ChosenOre = Ores.Find(ore => ore.name == oreName);  
         Debug.Log("Chosen ore: " + ChosenOre);
         OreImage.sprite = ChosenOre.sprite;
@@ -121,7 +121,7 @@ public class MiningScript : MonoBehaviour
 
     public string GetRandomOreName()
     {
-        double totalWeight = OreChances.Values.Sum(); // Сумма всех вероятностей
+        var totalWeight = OreChances.Values.Sum(); // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         double randomValue = UnityEngine.Random.Range(0f, (float)totalWeight);
         double cumulative = 0;
 
@@ -130,11 +130,11 @@ public class MiningScript : MonoBehaviour
             cumulative += ore.Value;
             if (randomValue <= cumulative)
             {
-                return ore.Key; // Выбрали руду
+                return ore.Key; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             }
         }
 
-        return OreChances.Keys.First(); // На случай ошибки, вернем первый элемент
+        return OreChances.Keys.First(); // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     }
 
     public void OnClickShopButton()
@@ -165,8 +165,8 @@ public class MiningScript : MonoBehaviour
         var array = Resources.LoadAll("Ores", typeof(Sprite));
         for (var i = 0; i < array.Length; i++)
         {
-            Sprite sprite = array[i] as Sprite;
-            string name = "";
+            var sprite = array[i] as Sprite;
+            var name = "";
             foreach (var naming in OreNames.names) {
                 if (sprite.name.Contains(naming))
                 {
@@ -174,7 +174,7 @@ public class MiningScript : MonoBehaviour
                     break;
                 }
             }  
-            int durability = 2;
+            var durability = 2;
             Ores.Add(new Ore(name, sprite, durability));
         }      
 
@@ -184,12 +184,12 @@ public class MiningScript : MonoBehaviour
 
     private IEnumerator LoadSpritesAsync()
     {
-        // Загрузка руд
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
         var oreArray = Resources.LoadAll("Ores", typeof(Sprite));
         for (var i = 0; i < oreArray.Length; i++)
         {
-            Sprite sprite = oreArray[i] as Sprite;
-            string name = "";
+            var sprite = oreArray[i] as Sprite;
+            var name = "";
 
             foreach (var naming in OreNames.names)
             {
@@ -200,15 +200,15 @@ public class MiningScript : MonoBehaviour
                 }
             }
 
-            int durability = 2;
+            var durability = 2;
             Ores.Add(new Ore(name, sprite, durability));
 
-            // Немного подождем, чтобы не фризить главный поток
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             if (i % 10 == 0)
                 yield return null;
         }
 
-        // Загрузка стадий разрушения
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         var stageArray = Resources.LoadAll("Destroy_stages", typeof(Sprite));
         for (var i = 0; i < stageArray.Length; i++)
         {
@@ -218,8 +218,8 @@ public class MiningScript : MonoBehaviour
                 yield return null;
         }
 
-        // Загрузка завершена
-        Debug.Log("Спрайты загружены");
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        Debug.Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
     }
 
     private IEnumerator LoadSpritesAndThenLoadSave()
@@ -245,51 +245,51 @@ public class MiningScript : MonoBehaviour
 
     private void getOfflineIncome()
     {
-        DateTime now = DateTime.Now;
-        TimeSpan offlineTime = now - lastSaveDate;
-        int offlineSeconds = (int)offlineTime.TotalSeconds;
+        var now = DateTime.Now;
+        var offlineTime = now - lastSaveDate;
+        var offlineSeconds = (int)offlineTime.TotalSeconds;
 
-        // Если нечего считать — выходим
+        // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         if (offlineSeconds <= 0 || pickaxeAutoPower <= 0) return;
 
-        // Общая сумма шансов (нормализация)
-        double totalChance = OreChances.Values.Sum();
+        // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+        var totalChance = OreChances.Values.Sum();
 
-        // Подсчёт общего количества попыток
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         double totalAttempts = (offlineSeconds * pickaxeAutoPower) / DestroyStages.Count;
 
-        // Подсчёт количества каждой руды на основе вероятности
-        Dictionary<string, int> earnedOres = new Dictionary<string, int>();
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        var earnedOres = new Dictionary<string, int>();
         foreach (var kvp in OreChances)
         {
-            double chance = kvp.Value / totalChance;
-            int oreCount = (int)(chance * totalAttempts); // можно использовать Math.Floor/Math.Round по желанию
+            var chance = kvp.Value / totalChance;
+            var oreCount = (int)(chance * totalAttempts); // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Math.Floor/Math.Round пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             earnedOres[kvp.Key] = oreCount;
         }
 
 
-        // Пример вывода результатов (можешь заменить на добавление в инвентарь и т.п.)
+        // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅ.пїЅ.)
 
 
         // Auto-melting
-        Dictionary<string, int> smeltedOres = new Dictionary<string, int>();
+        var smeltedOres = new Dictionary<string, int>();
 
         foreach (var ore in OreNames.names)
         {
             smeltedOres[ore] = 0;
 
-            // Проверка: есть ли руда в CraftTime и в списке names
-            if (!CraftPanelScript.CraftTime.TryGetValue(ore, out int timePerOne) || timePerOne <= 0)
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ CraftTime пїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ names
+            if (!CraftPanelScript.CraftTime.TryGetValue(ore, out var timePerOne) || timePerOne <= 0)
                 continue;
 
-            int oreIndex = Array.IndexOf(OreNames.names, ore);
+            var oreIndex = Array.IndexOf(OreNames.names, ore);
             if (oreIndex < 0)
                 continue;
 
-            // furnaceLevel = 0 — ничего, 2 — первая руда, 4 — две и т.д.
+            // furnaceLevel = 0 пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, 2 пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, 4 пїЅ пїЅпїЅпїЅ пїЅ пїЅ.пїЅ.
             if (furnaceLevel >= oreIndex * 2)
             {
-                int earned = earnedOres[ore];
+                var earned = earnedOres[ore];
                 smeltedOres[ore] = Math.Min(earned, offlineSeconds / timePerOne);
                 earnedOres[ore] -= smeltedOres[ore];
             }
@@ -299,8 +299,8 @@ public class MiningScript : MonoBehaviour
         {
             OnInventoryChanged?.Invoke(ore, GetRefined(ore) + smeltedOres[ore], REFINED);
             OnInventoryChanged?.Invoke(ore, GetOre(ore) + earnedOres[ore], ORE);
-            Debug.Log($"Smelted {smeltedOres[ore]} единиц {ore} во время оффлайна.");
-            Debug.Log($"Mined {earnedOres[ore]} единиц {ore} во время оффлайна.");
+            Debug.Log($"Smelted {smeltedOres[ore]} пїЅпїЅпїЅпїЅпїЅпїЅ {ore} пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
+            Debug.Log($"Mined {earnedOres[ore]} пїЅпїЅпїЅпїЅпїЅпїЅ {ore} пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.");
             TogglePanel(OfflineIncomePanel);
             showOfflineIncome(earnedOres, smeltedOres);
         }
@@ -312,7 +312,7 @@ public class MiningScript : MonoBehaviour
     {
         foreach (var ore in OreNames.names)
         {
-            int index = Array.IndexOf(OreNames.names, ore);
+            var index = Array.IndexOf(OreNames.names, ore);
             if (index == -1)
             {
                 Debug.LogError("Ore name not found in OreNames");
@@ -325,13 +325,13 @@ public class MiningScript : MonoBehaviour
 
     private void onOreChancesChanged()
     {
-        int i = 0;
-        double totalWeight = OreChances.Values.Sum();
-        foreach (TMP_Text tMP_Text in OreChancesUI)
+        var i = 0;
+        var totalWeight = OreChances.Values.Sum();
+        foreach (var tMP_Text in OreChancesUI)
         {
-            string oreName = OreNames.names[i];
-            double weight = OreChances[oreName];
-            double percentage = (weight / totalWeight) * 100;
+            var oreName = OreNames.names[i];
+            var weight = OreChances[oreName];
+            var percentage = (weight / totalWeight) * 100;
             tMP_Text.text = " " + percentage.ToString("F2");
             i++;
         }

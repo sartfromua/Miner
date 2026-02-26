@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 748b3ad751cd9ee4c9f84dabdb9424bb, type: 3}
+  m_Name: OrichalcumOre
+  m_EditorClassIdentifier: 
+  oreId: orichalcum_ore
+  displayName: Orichalcum Ore
+  icon: {fileID: -4224807903397292566, guid: d085068a329e8ab42b552be5b7034ffe, type: 3}
+  durability: 0
+  chance: 0

@@ -28,7 +28,7 @@ public class CraftPanelScript : MonoBehaviour
 
     private void startCraft(string oreName)
     {
-        int index = Array.IndexOf(OreNames.names, oreName);
+        var index = Array.IndexOf(OreNames.names, oreName);
         if (GetOre(oreName) >= 1 && furnaceLevel != 0 && (furnaceLevel - 1) / 2 >= index) {
             OnInventoryChanged?.Invoke(oreName, GetOre(oreName) - 1, ORE);
             craftingTimeLeft[index] = CraftTime[oreName];
@@ -38,7 +38,7 @@ public class CraftPanelScript : MonoBehaviour
 
     private void endCraft(string oreName)
     {
-        int index = Array.IndexOf(OreNames.names, oreName);
+        var index = Array.IndexOf(OreNames.names, oreName);
         if (index == -1)
         {
             Debug.LogError("Ore name not found in OreNames");
@@ -75,7 +75,7 @@ public class CraftPanelScript : MonoBehaviour
         OnFurnaceLevelChanged += onFurnaceLevelChanged;
         onFurnaceLevelChanged();
 
-        for (int i = 0; i < sliders.Length; i++)
+        for (var i = 0; i < sliders.Length; i++)
         {
             sliders[i].value = 0;
             sliders[i].maxValue = CraftTime[OreNames.names[i]];
@@ -88,7 +88,7 @@ public class CraftPanelScript : MonoBehaviour
     private void onFurnaceLevelChanged()
     {
         autoCraftLevel = furnaceLevel / 2 - 1;
-        for (int i = 0; i < crafts.Length; i++)
+        for (var i = 0; i < crafts.Length; i++)
         {
             if (furnaceLevel == 0) break;
             if ((furnaceLevel - 1) / 2 >= i) crafts[i].gameObject.SetActive(true);
@@ -100,7 +100,7 @@ public class CraftPanelScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   
-        for (int i=0; i < sliders.Length; i++)
+        for (var i=0; i < sliders.Length; i++)
         {
             if (sliders[i].value < sliders[i].maxValue && craftingTimeLeft[i] != -1) sliders[i].value += Time.deltaTime;
             else

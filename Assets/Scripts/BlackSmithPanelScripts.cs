@@ -129,12 +129,12 @@ public class BlackSmithPanelScripts : MonoBehaviour
 
     public void OnClickSellAllOres()
     {
-        foreach (string oreName in OreNames.names) sellOre(oreName);
+        foreach (var oreName in OreNames.names) sellOre(oreName);
     }
 
     public void OnClickSellAllRefined()
     {
-        foreach (string oreName in OreNames.names) sellRefined(oreName);
+        foreach (var oreName in OreNames.names) sellRefined(oreName);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

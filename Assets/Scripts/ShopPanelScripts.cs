@@ -22,7 +22,7 @@ public class ShopPanelScripts : MonoBehaviour
 
     private void Awake()
     {
-        _instance = this; // Запоминаем экземпляр
+        _instance = this; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         OnMoneyChanged += onMoneyChanged;
         OnGoodsPricesChanged += onGoodsPricesChanged;
     }
@@ -32,7 +32,7 @@ public class ShopPanelScripts : MonoBehaviour
     {
         if (furnaceLevel < 12) GoodsNames[2] = furnaceUpgrades[furnaceLevel];
         else GoodsNames[2] = "No more upgrades";
-        for (int i = 0; i < GoodsPrices.Length; i++)
+        for (var i = 0; i < GoodsPrices.Length; i++)
             {
                 GoodsPriceText[i].text = GoodsPrices[i].ToString();
                 GoodsNameText[i].text = GoodsNames[i].ToString();
@@ -100,7 +100,7 @@ public class ShopPanelScripts : MonoBehaviour
     // Makes text green if u have enough or else red
     public static void checkMoneyForShopPrices()
     {
-        for (int i = 0; i < _instance.GoodsPriceText.Length; i++)
+        for (var i = 0; i < _instance.GoodsPriceText.Length; i++)
         {
             if (Money >= GoodsPrices[i])
                 _instance.GoodsPriceText[i].color = Color.green;
@@ -119,7 +119,7 @@ public class ShopPanelScripts : MonoBehaviour
 
     private static int GetOreLevel(string ore)
     {
-        Dictionary<string, int> OreLevels = new Dictionary<string, int>
+        var OreLevels = new Dictionary<string, int>
         {
             { OreNames.COAL, 1 },
             { OreNames.COPPER, 5 },
@@ -137,7 +137,7 @@ public class ShopPanelScripts : MonoBehaviour
 
     public static Dictionary<string, double> CalculateOreChances(int oreLevel)
     {
-        Dictionary<string, double> newOreChances = new Dictionary<string, double>
+        var newOreChances = new Dictionary<string, double>
         {
             { OreNames.COAL, 0 },
             { OreNames.COPPER, 0 },
@@ -150,12 +150,12 @@ public class ShopPanelScripts : MonoBehaviour
             //{ OreNames.QUARTZ, 0 },
         };
 
-        double sum = 0;  // Для нормализации
-        List<string> keys = OreChances.Keys.ToList();
+        double sum = 0;  // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+        var keys = OreChances.Keys.ToList();
 
         foreach (var ore in keys)
         {
-            int oreLvl = GetOreLevel(ore);  // Уровень руды
+            var oreLvl = GetOreLevel(ore);  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             double chance;
 
             if (oreLevel < oreLvl)
@@ -165,14 +165,14 @@ public class ShopPanelScripts : MonoBehaviour
             }
             else
             {
-                chance = Math.Exp(-2.0 * (oreLevel - oreLvl));  // Резкий спад
+                chance = Math.Exp(-2.0 * (oreLevel - oreLvl));  // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             }
 
             newOreChances[ore] = chance;
             sum += chance;
         }
 
-        // Нормализация (сумма = 100%)
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ = 100%)
         foreach (var ore in keys)
         {
             newOreChances[ore] = (newOreChances[ore] / sum) * 100.0;
@@ -190,7 +190,7 @@ public class ShopPanelScripts : MonoBehaviour
     void Start()
     {
         if (!saveLoaded) OnGoodsPricesChanged?.Invoke(GoodsPrices);
-        for (int i = 0; i < GoodsPrices.Length; i++)
+        for (var i = 0; i < GoodsPrices.Length; i++)
         {
             GoodsPriceText[i].resizeTextForBestFit = true;
             GoodsPriceText[i].resizeTextMaxSize = 60;

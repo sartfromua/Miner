@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: OreDatabase
+  m_EditorClassIdentifier: Assembly-CSharp:Ores:OreDatabase
+  allOres:
+  - {fileID: 11400000, guid: fd6a228d2f3c62844918130c5f7d133f, type: 2}
+  - {fileID: 11400000, guid: 0bb8d5d1813670e43bde974b3ab8d441, type: 2}
+  - {fileID: 11400000, guid: ac7161cad76cd4e4ebe0117c88aef93d, type: 2}
+  - {fileID: 11400000, guid: bd8ef2c191523a44d9d76b289c2b03b0, type: 2}
+  - {fileID: 11400000, guid: b0d4fe5846d0ae44986cf2f97695a383, type: 2}
+  - {fileID: 11400000, guid: 7e9884b61cee0e540812cb1ef6981c50, type: 2}
+  - {fileID: 11400000, guid: b3f29af6bd0ae854c811b086d635a2cd, type: 2}
+  - {fileID: 11400000, guid: 8697fb366c82d6244b162428c5486a57, type: 2}
+  spawnCurve:
+    leftSpread: 2
+    rightSpread: 0.5
+    peakShiftPerLevel: 1
+    basePeak: 1
