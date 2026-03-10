@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d13c9e02eb21401a8b0f07f6594fa5e6, type: 3}
-  m_Name: SellingOresPriceMultiplier
+  m_Script: {fileID: 11500000, guid: 93a30160f0c74a74890c94eca223e486, type: 3}
+  m_Name: AdamantiteRefined
   m_EditorClassIdentifier: 
-  name: SellingOresMultiplier
-  price: 100
-  maxLevel: 100
+  oreId: adamantite_ore
+  timeToMelt: 300
+  icon: {fileID: 874987732044943976, guid: 483ab0c3213af044c86329c8766464e4, type: 3}

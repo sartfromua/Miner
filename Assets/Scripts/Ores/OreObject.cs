@@ -28,7 +28,8 @@ public class OreObject : MonoBehaviour, IPointerDownHandler
         _onOreBrokenCallback = onBroken; // Запоминаем, кого уведомить
         
         // 1. Получаем прочность
-        _maxHp = data.durability;
+        // _maxHp = data.durability;
+        _maxHp = GameDataManager.GetOreDurability(data.oreId);
         _currentHp = _maxHp;
 
         // 2. Сбрасываем визуал

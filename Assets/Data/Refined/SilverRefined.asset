@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d13c9e02eb21401a8b0f07f6594fa5e6, type: 3}
-  m_Name: SellingOresPriceMultiplier
+  m_Script: {fileID: 11500000, guid: 93a30160f0c74a74890c94eca223e486, type: 3}
+  m_Name: SilverRefined
   m_EditorClassIdentifier: 
-  name: SellingOresMultiplier
-  price: 100
-  maxLevel: 100
+  oreId: silver_ore
+  timeToMelt: 60
+  icon: {fileID: -3395145398517087020, guid: bfe50f302e9d3874d9aefa4ad056ea3c, type: 3}

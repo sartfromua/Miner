@@ -12,9 +12,20 @@ public class PlayerData
     public string playerName;
     // Ключ — ID руды, значение — количество
     public Dictionary<string, int> OresInventory = new Dictionary<string, int>();
+    public Dictionary<string, int> RefinedInventory = new Dictionary<string, int>();
     // Ключ — ID апгрейда, значение — текущий уровень
     public Dictionary<string, int> Upgrades = new Dictionary<string, int>();
 
+    // === СИСТЕМА ОФФЛАЙН-КРАФТА ===
+    [Serializable]
+    public class FurnaceSlotData
+    {
+        public string slotId = "";           // уникальный ID слота (например "Furnace")
+        public long startTimeUnix = 0;       // 0 = крафт не запущен
+    }
+
+    public List<FurnaceSlotData> craftSlots = new List<FurnaceSlotData>();
+    
     public PlayerData()
     {
         score = 0;

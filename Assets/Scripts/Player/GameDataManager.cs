@@ -16,7 +16,7 @@ public partial class GameDataManager : MonoBehaviour
     public PlayerData playerData = new PlayerData();
     public OreDatabase oreDataBase; // Reference to your ScriptableObject
     public UpgradesDataBase upgradesDataBase; // Reference to your ScriptableObject
-    
+
     // Event for UI updates
     public System.Action OnDataUpdated;
     public System.Action OnDataLoaded;
@@ -55,7 +55,7 @@ public partial class GameDataManager : MonoBehaviour
             }
         }
     }
-    
+
     // Обязательно сохраняем при закрытии игры/сворачивании на телефон
     private void OnApplicationPause(bool pauseStatus)
     {
@@ -64,7 +64,7 @@ public partial class GameDataManager : MonoBehaviour
             PlayFabService.SavePlayerData(playerData);
         }
     }
-    
+
     private void OnApplicationQuit()
     {
         if (_needsSaving)
@@ -73,23 +73,13 @@ public partial class GameDataManager : MonoBehaviour
         }
     }
 
-    public static float GetOreDurability(string oreId)
-    {
-        if (Instance == null || Instance.oreDataBase == null) return 1;
-
-        // Corrected syntax from your snippet
-        var setting = Instance.oreDataBase.allOres.Find(x => x.oreId == oreId);
-
-        return setting != null ? setting.durability : 1f; 
-    }
-
     public void UpdatePlayerData(PlayerData newProgress)
     {
         playerData = newProgress;
         OnDataUpdated?.Invoke();
         Debug.Log("User updated data" + JsonConvert.SerializeObject(playerData));
     }
-    
+
     public void UpdateOresData(Dictionary<string, OreServerData> newOres)
     {
         // Проходим по всем рудам, которые есть у нас в базе (ScriptableObject)
@@ -102,11 +92,13 @@ public partial class GameDataManager : MonoBehaviour
             ore.durability = serverSettings.durability;
             ore.price = serverSettings.price;
         }
-    
+
         Debug.Log("Данные руд обновлены с сервера!");
         OnDataUpdated?.Invoke(); // Уведомляем игру, что цифры изменились
     }
-    
+
+    #region ====== АПГРЕЙДЫ ======
+
     public void UpdateUpgradesData(Dictionary<string, UpgradeServerData> newUpgrades)
     {
         foreach (var upgrade in upgradesDataBase.allUpgrades)
@@ -116,36 +108,20 @@ public partial class GameDataManager : MonoBehaviour
             upgrade.price = serverSettings.price;
             upgrade.maxLevel = serverSettings.maxLevel;
         }
-    
+
         Debug.Log("Данные улучшений обновлены с сервера!");
         OnDataUpdated?.Invoke(); // Уведомляем игру, что цифры изменились
         OnUpgradesUpdated?.Invoke();
     }
     
-    public void SellOre(string oreId, int amount, int pricePerUnit)
-    {
-        if (!playerData.OresInventory.TryGetValue(oreId, out var currentAmount)) return;
-
-        if (currentAmount < amount) return;
-        // 1. Отнимаем руду
-        playerData.OresInventory[oreId] -= amount;
-        
-        playerData.money += (int)(amount * pricePerUnit * GetSellingOreMultiplier());
-                
-        Debug.Log($"Продано {amount} шт. {oreId}. Заработано {amount * pricePerUnit} монет.");
-
-        // 3. Сообщаем всем, что данные изменились (UI обновится сам)
-        OnDataUpdated?.Invoke();
-    }
-
     public int GetUpgradePrice(UpgradeName upgradeName)
     {
         var upgradeData = upgradesDataBase.GetUpgradeInfoByName(upgradeName);
         var level = GetUpgradeLevel(upgradeName);
-        
+
         return upgradeData.price * (1 + level);
     }
-    
+
     public void BuyUpgrade(UpgradeName upgradeName)
     {
         var upgradeData = upgradesDataBase.GetUpgradeInfoByName(upgradeName);
@@ -160,13 +136,13 @@ public partial class GameDataManager : MonoBehaviour
             playerData.money -= price;
 
             // 3. Уровни апгрейдов
-            if (!playerData.Upgrades.TryAdd(upgradeName, 1)) 
+            if (!playerData.Upgrades.TryAdd(upgradeName, 1))
                 playerData.Upgrades[upgradeName] += 1;
-            
+
             // 4. Сообщаем всем, что данные изменились (UI обновится сам)
             OnDataUpdated?.Invoke();
             OnUpgradesUpdated?.Invoke();
-            
+
             Debug.Log($"Куплен апгрейд: {upgradeName}. Остаток: {playerData.money}");
         }
         else
@@ -181,18 +157,31 @@ public partial class GameDataManager : MonoBehaviour
         return currentLevel;
     }
 
+    #endregion
+
+    #region ====== КОНСТАНТЫ ПОСЛЕ АПГРЕЙДОВ ======
     public int GetDamage()
     {
         var totalDamage = 1;
         totalDamage += GetUpgradeLevel(UpgradeName.Pickaxe);
         return totalDamage;
     }
+    
+    public static float GetOreDurability(string oreId)
+    {
+        if (!Instance || !Instance.oreDataBase) return 1;
+
+        // Corrected syntax from your snippet
+        var setting = Instance.oreDataBase.allOres.Find(x => x.oreId == oreId);
+
+        return setting ? setting.durability : 1f;
+    }
 
     private int GetDoubleHarvestProc()
     {
         const double chancePerLevel = 0.2; // 20% за рівень
         var level = GetUpgradeLevel(UpgradeName.DoubleHarvest);
-    
+
         var totalValue = level * chancePerLevel;
 
         var guaranteed = (int)Math.Floor(totalValue);
@@ -214,7 +203,27 @@ public partial class GameDataManager : MonoBehaviour
         var level = GetUpgradeLevel(UpgradeName.SellingOresMult);
         return (float)(1 + multPerLevel * level);
     }
+    
+    #endregion
 
+    #region ====== ВЗАИМОДЕЙСТВИЕ С ДАННЫМИ ИГРОКА ======
+    
+    public void SellOre(string oreId, int amount, int pricePerUnit)
+    {
+        if (!playerData.OresInventory.TryGetValue(oreId, out var currentAmount)) return;
+
+        if (currentAmount < amount) return;
+        // 1. Отнимаем руду
+        playerData.OresInventory[oreId] -= amount;
+
+        playerData.money += (int)(amount * pricePerUnit * GetSellingOreMultiplier());
+
+        Debug.Log($"Продано {amount} шт. {oreId}. Заработано {amount * pricePerUnit} монет.");
+
+        // 3. Сообщаем всем, что данные изменились (UI обновится сам)
+        OnDataUpdated?.Invoke();
+    }
+    
     public void AddMoney(int amount)
     {
         playerData.money += amount;
@@ -224,14 +233,79 @@ public partial class GameDataManager : MonoBehaviour
         // 3. Сообщаем всем, что данные изменились (UI обновится сам)
         OnDataUpdated?.Invoke();
     }
-    
-    public void AddOre(string oreId, int amount=1)
+
+    public void AddOre(string oreId, int amount = 1)
     {
         amount += GetDoubleHarvestProc();
         if (!playerData.OresInventory.TryAdd(oreId, amount))
             playerData.OresInventory[oreId] += amount;
         playerData.blocksBroken += amount;
-        
+
         OnDataUpdated?.Invoke();
     }
+    #endregion
+
+    #region ====== ОФФЛАЙН КРАФТ ======
+
+    public PlayerData.FurnaceSlotData GetFurnaceSlot(string slotId)
+    {
+        var slot = playerData.craftSlots.Find(s => s.slotId == slotId);
+        if (slot != null) return slot;
+        slot = new PlayerData.FurnaceSlotData { slotId = slotId };
+        playerData.craftSlots.Add(slot);
+        return slot;
+    }
+
+    public bool StartFurnaceCraft(string slotId, string inputOreId, int inputAmount, float durationSeconds)
+    {
+        var slot = GetFurnaceSlot(slotId);
+        if (slot.startTimeUnix > 0) return false; // уже идёт крафт
+
+        if (!playerData.OresInventory.TryGetValue(inputOreId, out var count) || count < inputAmount)
+        {
+            Debug.LogWarning($"Недостаточно {inputOreId} для крафта!");
+            return false;
+        }
+
+        playerData.OresInventory[inputOreId] -= inputAmount;
+
+        slot.startTimeUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();;
+        OnDataUpdated?.Invoke();
+        return true;
+    }
+
+    public float GetFurnaceCraftProgress(string slotId, float durationSeconds)
+    {
+        var slot = GetFurnaceSlot(slotId);
+        if (slot.startTimeUnix == 0) return 0f;
+
+        var currentUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        var elapsed = currentUnix - slot.startTimeUnix;        
+        return Mathf.Clamp01((float)elapsed / durationSeconds);
+    }
+
+    public bool IsFurnaceCraftReady(string slotId, float durationSeconds)
+    {
+        var slot = GetFurnaceSlot(slotId);
+        if (slot.startTimeUnix == 0) return false;
+
+        var elapsed = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds - slot.startTimeUnix;
+        return elapsed >= (long)durationSeconds;
+    }
+
+    public bool ClaimFurnaceCraft(string slotId, string outputOreId, int outputAmount)
+    {
+        var slot = GetFurnaceSlot(slotId);
+        if (slot.startTimeUnix == 0) return false;
+
+        // Здесь duration не нужен, т.к. проверка уже в IsCraftReady
+        if (!playerData.RefinedInventory.TryAdd(outputOreId, outputAmount))
+            playerData.RefinedInventory[outputOreId] += outputAmount;
+
+        slot.startTimeUnix = 0; // сбрасываем
+        OnDataUpdated?.Invoke();
+        return true;
+    }
+
+    #endregion
 }

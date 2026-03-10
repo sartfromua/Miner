@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d13c9e02eb21401a8b0f07f6594fa5e6, type: 3}
   m_Name: DoubleHarvest
   m_EditorClassIdentifier: 
-  name: Double Harvest chance
-  price: 100
-  level: 0
+  name: DoubleHarvest
+  price: 200
   maxLevel: 100
