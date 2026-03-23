@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using System.Linq;
 using Ores;
+using Ores.Refined;
 using Shop.Upgrades;
 using UnityEngine.Serialization; // Needed if you want to use LINQ shortcuts, otherwise List.Find is fine
 
@@ -15,6 +16,7 @@ public partial class GameDataManager : MonoBehaviour
 
     public PlayerData playerData = new PlayerData();
     public OreDatabase oreDataBase; // Reference to your ScriptableObject
+    public RefinedDatabase refinedDataBase; // Reference to your ScriptableObject
     public UpgradesDataBase upgradesDataBase; // Reference to your ScriptableObject
 
     // Event for UI updates
@@ -243,8 +245,9 @@ public partial class GameDataManager : MonoBehaviour
 
         OnDataUpdated?.Invoke();
     }
-    #endregion
 
+    #endregion
+    
     #region ====== ОФФЛАЙН КРАФТ ======
 
     public PlayerData.FurnaceSlotData GetFurnaceSlot(string slotId)

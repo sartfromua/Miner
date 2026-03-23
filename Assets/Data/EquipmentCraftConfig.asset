@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1bf9681f514b514d8e9a37720773039, type: 3}
+  m_Name: EquipmentCraftConfig
+  m_EditorClassIdentifier: 
+  rarityThresholds:
+  - minResources: 0
+    rarityLevel: 1
+  - minResources: 10
+    rarityLevel: 2
+  - minResources: 30
+    rarityLevel: 3
+  - minResources: 60
+    rarityLevel: 4
+  - minResources: 100
+    rarityLevel: 5
+  statMultipliers:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  baseCraftDurationSeconds: 5
+  maxStatsCount: 4

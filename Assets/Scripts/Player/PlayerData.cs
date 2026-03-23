@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using EquipmentCraft;
 using Newtonsoft.Json;
 
 [Serializable]
@@ -15,8 +16,16 @@ public class PlayerData
     public Dictionary<string, int> RefinedInventory = new Dictionary<string, int>();
     // Ключ — ID апгрейда, значение — текущий уровень
     public Dictionary<string, int> Upgrades = new Dictionary<string, int>();
+    
+    public EquipmentCraftState equipmentCraftState = new EquipmentCraftState();
 
-    // === СИСТЕМА ОФФЛАЙН-КРАФТА ===
+    /// <summary>Инвентарь предметов экипировки, полученных через крафт.</summary>
+    public List<EquipmentCraft.EquipmentItem> equipmentInventory = new List<EquipmentCraft.EquipmentItem>();
+
+    /// <summary>Экипированные предметы по типам (только по 1 предмету каждого типа).</summary>
+    public Dictionary<EquipmentType, EquipmentItem> equippedItems = new Dictionary<EquipmentType, EquipmentItem>();
+
+    // === СИСТЕМА ОФФЛАЙН-ПЛАВКИ ===
     [Serializable]
     public class FurnaceSlotData
     {
