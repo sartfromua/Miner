@@ -109,5 +109,45 @@ public partial class GameDataManager
         return result;
     }
 
+    /// <summary>
+    /// Получает суммарные бонусы всех экипированных предметов.
+    /// </summary>
+    /// <returns>Словарь (statId -> суммарное значение)</returns>
+    public Dictionary<string, float> GetTotalEquipmentStats()
+    {
+        var totalStats = new Dictionary<string, float>();
+
+        if (playerData?.equippedItems == null)
+            return totalStats;
+
+        // Проходим по всем экипированным предметам
+        foreach (var kvp in playerData.equippedItems)
+        {
+            var item = kvp.Value;
+            if (item?.stats == null)
+                continue;
+
+            // Суммируем статы
+            foreach (var stat in item.stats)
+            {
+                if (!totalStats.TryAdd(stat.statId, stat.value))
+                    totalStats[stat.statId] += stat.value;
+            }
+        }
+
+        return totalStats;
+    }
+
+    /// <summary>
+    /// Получает значение конкретного стата из экипировки.
+    /// </summary>
+    /// <param name="statId">ID характеристики</param>
+    /// <returns>Суммарное значение стата из всей экипировки</returns>
+    public float GetEquipmentStat(string statId)
+    {
+        var stats = GetTotalEquipmentStats();
+        return stats.TryGetValue(statId, out var value) ? value : 0f;
+    }
+
     #endregion
 }

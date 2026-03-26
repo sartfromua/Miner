@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statId: 3
   displayName: Furnace speed
-  baseValue: 1
+  baseValue: 0.2

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EquipmentCraft;
+using TMPro;
 using UnityEngine;
 
 namespace Ui
@@ -32,6 +33,10 @@ namespace Ui
 
         [Tooltip("Панель детального просмотра предмета")]
         public EquipmentDetailPanel detailPanel;
+
+        [Header("Stats Display")]
+        [Tooltip("Текстовое поле для отображения суммарных бонусов экипировки")]
+        public TextMeshProUGUI totalStatsText;
 
         private Dictionary<EquipmentType, EquipmentFrameUI> slotsByType;
 
@@ -67,11 +72,9 @@ namespace Ui
         private void OnDisable()
         {
             // Отписываемся от событий
-            if (GameDataManager.Instance != null)
-            {
-                GameDataManager.Instance.OnDataUpdated -= UpdateDisplay;
-                GameDataManager.Instance.OnDataLoaded -= UpdateDisplay;
-            }
+            if (GameDataManager.Instance == null) return;
+            GameDataManager.Instance.OnDataUpdated -= UpdateDisplay;
+            GameDataManager.Instance.OnDataLoaded -= UpdateDisplay;
         }
 
         /// <summary>
@@ -105,6 +108,7 @@ namespace Ui
             if (!GameDataManager.Instance || GameDataManager.Instance.playerData == null)
             {
                 ClearAllSlots();
+                UpdateTotalStatsDisplay(null);
                 return;
             }
 
@@ -131,6 +135,9 @@ namespace Ui
                     slot.Clear();
                 }
             }
+
+            // Обновляем отображение суммарных статов
+            UpdateTotalStatsDisplay(GameDataManager.Instance.GetTotalEquipmentStats());
         }
 
         /// <summary>
@@ -143,6 +150,53 @@ namespace Ui
                 if (kvp.Value != null)
                     kvp.Value.Clear();
             }
+        }
+
+        /// <summary>
+        /// Обновляет текстовое поле с суммарными бонусами экипировки.
+        /// </summary>
+        /// <param name="stats">Словарь со статами (statId -> значение). Null если нет данных.</param>
+        private void UpdateTotalStatsDisplay(Dictionary<string, float> stats)
+        {
+            if (totalStatsText == null)
+                return;
+
+            if (stats == null || stats.Count == 0)
+            {
+                totalStatsText.text = "Stats:\n - No equipment";
+                return;
+            }
+
+            // Формируем текст по шаблону
+            var text = "Stats:";
+
+            // Порядок отображения статов (по statId)
+            var statOrder = new[] { "1", "2", "3", "4", "5", "6" };
+            var statNames = new Dictionary<string, string>
+            {
+                { "1", "Auto pickaxe" },
+                { "2", "Craft Chance Multiplier" },
+                { "3", "Furnace speed" },
+                { "4", "Pickaxe damage" },
+                { "5", "Ores Selling price multiplier" },
+                { "6", "Shop discount" }
+            };
+
+            foreach (var statId in statOrder)
+            {
+                if (stats.TryGetValue(statId, out var value))
+                {
+                    var statName = statNames.TryGetValue(statId, out var name) ? name : $"Stat{statId}";
+                    text += $"\n - {statName}: {value:F1}";
+                }
+                else
+                {
+                    var statName = statNames.TryGetValue(statId, out var name) ? name : $"Stat{statId}";
+                    text += $"\n - {statName}: 0";
+                }
+            }
+
+            totalStatsText.text = text;
         }
     }
 }

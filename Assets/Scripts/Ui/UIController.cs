@@ -49,12 +49,17 @@ public class UIController : MonoBehaviour
     // Метод принимает номер панели, которую надо открыть
     private void OpenPanel(int panelIndex)
     {
-        // Пробегаем по всем панелям
+        foreach (var panel in panels)
+        {
+            panel.SetActive(false);
+        }
         for (var i = 0; i < panels.Count; i++)
         {
-            // Если индекс совпал - включаем
-            panels[i].SetActive(i == panelIndex);
-            // Все остальные - выключаем
+            if (i == panelIndex)
+            {
+                panels[i].SetActive(true);
+                return;
+            }
         }
     }
 

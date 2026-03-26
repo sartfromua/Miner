@@ -13,9 +13,13 @@ public class OreObject : MonoBehaviour, IPointerDownHandler
     private OreData _data;
     private float _maxHp;
     private float _currentHp;
-    
+
     // Действие, которое мы вызовем, когда руда сломается
     private Action _onOreBrokenCallback;
+
+    // Таймер для автоматического урона
+    private float _autoAttackTimer = 0f;
+    private const float AUTO_ATTACK_INTERVAL = 1f; // Раз в секунду
 
     // Убрали OnEnable, так как руда сама себя не спавнит.
     // Этим управляет OreSpawnService.
@@ -26,7 +30,7 @@ public class OreObject : MonoBehaviour, IPointerDownHandler
         Debug.Log("Setting up Ore Object " + data.oreId);
         _data = data;
         _onOreBrokenCallback = onBroken; // Запоминаем, кого уведомить
-        
+
         // 1. Получаем прочность
         // _maxHp = data.durability;
         _maxHp = GameDataManager.GetOreDurability(data.oreId);
@@ -34,11 +38,34 @@ public class OreObject : MonoBehaviour, IPointerDownHandler
 
         // 2. Сбрасываем визуал
         mainRenderer.sprite = data.icon;
-        
-        if(crackRenderer) crackRenderer.sprite = crackSprites[0]; 
+
+        if(crackRenderer) crackRenderer.sprite = crackSprites[0];
+
+        // 3. Сбрасываем таймер автоатаки
+        _autoAttackTimer = 0f;
 
         // Включаем объект, так как в конце жизни мы его выключаем
         gameObject.SetActive(true);
+    }
+
+    private void Update()
+    {
+        // Автоматический урон раз в секунду
+        if (GameDataManager.Instance != null)
+        {
+            float autoPickaxeDamage = GameDataManager.Instance.GetAutoPickaxeDamage();
+
+            if (autoPickaxeDamage > 0)
+            {
+                _autoAttackTimer += Time.deltaTime;
+
+                if (_autoAttackTimer >= AUTO_ATTACK_INTERVAL)
+                {
+                    _autoAttackTimer = 0f;
+                    TakeDamage(autoPickaxeDamage);
+                }
+            }
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData)

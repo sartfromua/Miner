@@ -121,7 +121,15 @@ public partial class GameDataManager : MonoBehaviour
         var upgradeData = upgradesDataBase.GetUpgradeInfoByName(upgradeName);
         var level = GetUpgradeLevel(upgradeName);
 
-        return upgradeData.price * (1 + level);
+        int basePrice = upgradeData.price * (1 + level);
+
+        // Применяем скидку от экипировки (statId: 6 = Shop discount)
+        // Формула: базовая цена / (1 + бонус скидки)
+        // Например: 100 / (1 + 0.1) = 90
+        float discountBonus = GetEquipmentStat("6");
+        int finalPrice = (int)(basePrice / (1f + discountBonus));
+
+        return Mathf.Max(1, finalPrice); // Минимальная цена 1
     }
 
     public void BuyUpgrade(UpgradeName upgradeName)
@@ -166,9 +174,63 @@ public partial class GameDataManager : MonoBehaviour
     {
         var totalDamage = 1;
         totalDamage += GetUpgradeLevel(UpgradeName.Pickaxe);
+
+        // Добавляем бонус от экипировки (statId: 4 = Pickaxe damage)
+        totalDamage += (int)GetEquipmentStat("4");
+
         return totalDamage;
     }
-    
+
+    /// <summary>
+    /// Получает урон от автоматической кирки (урон в секунду).
+    /// </summary>
+    public float GetAutoPickaxeDamage()
+    {
+        // Урон от апгрейда AutoPickaxe
+        float upgradeDamage = GetUpgradeLevel(UpgradeName.AutoPickaxe);
+
+        // Урон от экипировки (statId: 1 = Auto pickaxe)
+        float equipmentDamage = GetEquipmentStat("1");
+
+        return upgradeDamage + equipmentDamage;
+    }
+
+    /// <summary>
+    /// Получает уровень автоплавки (количество руд, которые автоматически плавятся).
+    /// </summary>
+    public int GetAutoSmeltLevel()
+    {
+        return GetUpgradeLevel(UpgradeName.AutoSmelt);
+    }
+
+    /// <summary>
+    /// Получает список ID руд, которые автоматически плавятся (по порядку из базы данных).
+    /// </summary>
+    public List<string> GetAutoSmeltOreIds()
+    {
+        int level = GetAutoSmeltLevel();
+        if (level <= 0 || oreDataBase == null || oreDataBase.allOres == null)
+            return new List<string>();
+
+        var autoSmeltOres = new List<string>();
+        int count = Mathf.Min(level, oreDataBase.allOres.Count);
+
+        for (int i = 0; i < count; i++)
+        {
+            autoSmeltOres.Add(oreDataBase.allOres[i].oreId);
+        }
+
+        return autoSmeltOres;
+    }
+
+    /// <summary>
+    /// Проверяет, включена ли автоплавка для указанной руды.
+    /// </summary>
+    public bool IsAutoSmeltEnabled(string oreId)
+    {
+        return GetAutoSmeltOreIds().Contains(oreId);
+    }
+
     public static float GetOreDurability(string oreId)
     {
         if (!Instance || !Instance.oreDataBase) return 1;
@@ -203,7 +265,12 @@ public partial class GameDataManager : MonoBehaviour
     {
         const double multPerLevel = 0.05;
         var level = GetUpgradeLevel(UpgradeName.SellingOresMult);
-        return (float)(1 + multPerLevel * level);
+        float upgradeMultiplier = (float)(1 + multPerLevel * level);
+
+        // Добавляем бонус от экипировки (statId: 5 = Ores Selling price multiplier)
+        // Формула: (1 + бонус от апгрейда) * (1 + бонус от экипировки)
+        float equipmentBonus = GetEquipmentStat("5");
+        return upgradeMultiplier * (1f + equipmentBonus);
     }
     
     #endregion
@@ -250,6 +317,20 @@ public partial class GameDataManager : MonoBehaviour
     
     #region ====== ОФФЛАЙН КРАФТ ======
 
+    /// <summary>
+    /// Получает скорректированную длительность крафта печи с учетом бонуса от экипировки.
+    /// </summary>
+    /// <param name="baseDuration">Базовая длительность в секундах</param>
+    /// <returns>Скорректированная длительность (уменьшенная при наличии бонуса)</returns>
+    private float GetAdjustedFurnaceDuration(float baseDuration)
+    {
+        // Получаем бонус от экипировки (statId: 3 = Furnace speed)
+        // Формула: базовая длительность / (1 + бонус)
+        // Например: 100 сек / (1 + 0.2) = 83.33 сек
+        float speedBonus = GetEquipmentStat("3");
+        return baseDuration / (1f + speedBonus);
+    }
+
     public PlayerData.FurnaceSlotData GetFurnaceSlot(string slotId)
     {
         var slot = playerData.craftSlots.Find(s => s.slotId == slotId);
@@ -282,9 +363,12 @@ public partial class GameDataManager : MonoBehaviour
         var slot = GetFurnaceSlot(slotId);
         if (slot.startTimeUnix == 0) return 0f;
 
+        // Применяем бонус скорости печи
+        float adjustedDuration = GetAdjustedFurnaceDuration(durationSeconds);
+
         var currentUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        var elapsed = currentUnix - slot.startTimeUnix;        
-        return Mathf.Clamp01((float)elapsed / durationSeconds);
+        var elapsed = currentUnix - slot.startTimeUnix;
+        return Mathf.Clamp01((float)elapsed / adjustedDuration);
     }
 
     public bool IsFurnaceCraftReady(string slotId, float durationSeconds)
@@ -292,8 +376,11 @@ public partial class GameDataManager : MonoBehaviour
         var slot = GetFurnaceSlot(slotId);
         if (slot.startTimeUnix == 0) return false;
 
+        // Применяем бонус скорости печи
+        float adjustedDuration = GetAdjustedFurnaceDuration(durationSeconds);
+
         var elapsed = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds - slot.startTimeUnix;
-        return elapsed >= (long)durationSeconds;
+        return elapsed >= (long)adjustedDuration;
     }
 
     public bool ClaimFurnaceCraft(string slotId, string outputOreId, int outputAmount)

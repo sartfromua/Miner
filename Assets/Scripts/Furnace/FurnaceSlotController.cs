@@ -45,7 +45,43 @@ namespace Furnace
 
         private void Update()
         {
+            UpdateAutoSmelt(); // проверяем автоплавку
             RefreshUI(); // обновляем прогресс каждый кадр
+        }
+
+        /// <summary>
+        /// Обработка автоматической плавки
+        /// </summary>
+        private void UpdateAutoSmelt()
+        {
+            if (GameDataManager.Instance == null)
+                return;
+
+            // Проверяем, включена ли автоплавка для этой руды
+            if (!GameDataManager.Instance.IsAutoSmeltEnabled(inputOreId))
+                return;
+
+            var slot = GameDataManager.Instance.GetFurnaceSlot(slotId);
+            bool isCrafting = slot.startTimeUnix > 0;
+            bool isReady = GameDataManager.Instance.IsFurnaceCraftReady(slotId, craftTimeSeconds);
+
+            // Если крафт готов - забираем результат
+            if (isReady)
+            {
+                if (GameDataManager.Instance.ClaimFurnaceCraft(slotId, outputOreId, outputAmount))
+                {
+                    Debug.Log($"[AutoSmelt] Автоматически получено {outputAmount} × {outputOreId}");
+                }
+            }
+
+            // Если крафт не идёт - пытаемся запустить
+            if (!isCrafting)
+            {
+                if (GameDataManager.Instance.StartFurnaceCraft(slotId, inputOreId, inputAmount, craftTimeSeconds))
+                {
+                    Debug.Log($"[AutoSmelt] Автоматически запущена плавка {slotId}");
+                }
+            }
         }
 
         private void OnLeftClick()
@@ -91,22 +127,28 @@ namespace Furnace
             var progress = GameDataManager.Instance.GetFurnaceCraftProgress(slotId, craftTimeSeconds);
             var isReady = GameDataManager.Instance.IsFurnaceCraftReady(slotId, craftTimeSeconds);
             var isCrafting = GameDataManager.Instance.GetFurnaceSlot(slotId).startTimeUnix > 0;
+            var isAutoSmeltEnabled = GameDataManager.Instance.IsAutoSmeltEnabled(inputOreId);
 
             progressBar.value = progress;
 
-            leftButton.interactable = !isCrafting;
-            rightButton.interactable = isReady;
+            // Отключаем кнопки, если включена автоплавка
+            leftButton.interactable = !isCrafting && !isAutoSmeltEnabled;
+            rightButton.interactable = isReady && !isAutoSmeltEnabled;
 
             if (isCrafting)
             {
                 var remaining = Mathf.Max(0, craftTimeSeconds - (progress * craftTimeSeconds));
-                timerText.text = remaining > 0 
-                    ? $"{Mathf.FloorToInt(remaining / 60)}:{Mathf.FloorToInt(remaining % 60):00}" 
-                    : "<color=green>ГОТОВО!</color>";
+                var baseText = remaining > 0
+                    ? $"{Mathf.FloorToInt(remaining / 60)}:{Mathf.FloorToInt(remaining % 60):00}"
+                    : "ГОТОВО!";
+
+                timerText.text = isAutoSmeltEnabled
+                    ? $"<color=yellow>AUTO</color> {baseText}"
+                    : baseText;
             }
             else
             {
-                timerText.text = "";
+                timerText.text = isAutoSmeltEnabled ? "<color=yellow>AUTO</color>" : "";
                 progressBar.value = 0;
             }
         }

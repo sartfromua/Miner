@@ -25,6 +25,11 @@ namespace EquipmentCraft
             var oreId = GameDataManager.Instance.oreDataBase.allOres[idx].oreId;
             return oreId;
         }
+        
+        public int GetNextOreAmount()
+        {
+            return amountPerOre - (storedAmount % amountPerOre);
+        }
 
         public void AddOreToCraft(int amount=1)
         {

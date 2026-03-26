@@ -14,6 +14,8 @@
         public static UpgradeName Pickaxe { get; } = new UpgradeName("Pickaxe");
         public static UpgradeName DoubleHarvest { get; } = new UpgradeName("DoubleHarvest");
         public static UpgradeName SellingOresMult { get; } = new UpgradeName("SellingOresMultiplier");
+        public static UpgradeName AutoPickaxe { get; } = new UpgradeName("AutoPickaxe");
+        public static UpgradeName AutoSmelt { get; } = new UpgradeName("AutoSmelt");
 
         // Словник для швидкого пошуку за рядком
         private static readonly Dictionary<string, UpgradeName> AllNames;
