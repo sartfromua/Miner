@@ -42,17 +42,21 @@ namespace Ui
         private EquipmentItem currentItem;
         private GameObject currentFrameInstance;
         private EquipmentFrameUI currentFrameUI;
+        private bool isInitialized = false;
 
-        private void Awake()
+        private void Initialize()
         {
+            if (isInitialized)
+                return;
+
             if (equipButton)
                 equipButton.onClick.AddListener(OnEquipButtonClicked);
 
             if (closeButton)
                 closeButton.onClick.AddListener(OnCloseButtonClicked);
 
-            // Скрываем панель при запуске
-            gameObject.SetActive(false);
+            isInitialized = true;
+            Debug.Log("[EquipmentDetailPanel] Initialized");
         }
 
         /// <summary>
@@ -65,6 +69,13 @@ namespace Ui
                 Debug.LogWarning("[EquipmentDetailPanel] Попытка показать панель для null предмета");
                 return;
             }
+
+            // Ініціалізуємо при першому виклику
+            Initialize();
+
+            Debug.Log($"[EquipmentDetailPanel] Show вызван для предмета: {item.itemName}");
+            Debug.Log($"[EquipmentDetailPanel] Текущий статус активности панели: {gameObject.activeSelf}");
+            Debug.Log($"[EquipmentDetailPanel] Родитель панели: {(transform.parent != null ? transform.parent.name : "null")}");
 
             currentItem = item;
 
@@ -87,7 +98,7 @@ namespace Ui
                 {
                     foreach (var stat in item.stats)
                     {
-                        statsString += $"{stat.displayName}: {stat.value:F0}\n";
+                        statsString += $"{stat.displayName}: {stat.value}\n";
                     }
                 }
                 else
@@ -102,6 +113,7 @@ namespace Ui
             UpdateEquipButton();
 
             gameObject.SetActive(true);
+            Debug.Log($"[EquipmentDetailPanel] SetActive(true) виконано. Новий статус: {gameObject.activeSelf}");
         }
 
         /// <summary>
