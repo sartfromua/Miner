@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
+using EquipmentCraft;
 using Newtonsoft.Json;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -9,95 +11,228 @@ public class PlayFabService : MonoBehaviour
 {
     /// <summary>
     /// PlayFab ID поточного гравця. Заповнюється після логіну.
-    /// Використовується для визначення власних лістингів на маркеті.
     /// </summary>
     public static string LocalPlayFabId { get; private set; }
 
+    // ─────────────────────────────────────────────────────────────
+    // КЛЮЧІ USERDАТА — кожна секція зберігається окремо
+    // ─────────────────────────────────────────────────────────────
+
+    private const string KeyProfile          = "PlayerProfile";      // { playerName }
+    private const string KeyStats            = "PlayerStats";         // { score, money, blocksBroken, damage }
+    private const string KeyOresInventory    = "OresInventory";       // Dictionary<string, int>
+    private const string KeyRefinedInventory = "RefinedInventory";    // Dictionary<string, int>
+    private const string KeyUpgrades         = "Upgrades";            // Dictionary<string, int>
+    private const string KeyCraftState       = "EquipmentCraftState"; // EquipmentCraftState
+    private const string KeyEquipInventory   = "EquipmentInventory";  // List<EquipmentItem>
+    private const string KeyEquippedItems    = "EquippedItems";       // Dictionary<EquipmentType, EquipmentItem>
+    private const string KeyCraftSlots       = "CraftSlots";          // List<FurnaceSlotData>
+
+    private static readonly List<string> AllKeys = new List<string>
+    {
+        KeyProfile, KeyStats, KeyOresInventory, KeyRefinedInventory,
+        KeyUpgrades, KeyCraftState, KeyEquipInventory, KeyEquippedItems, KeyCraftSlots
+    };
+
+    // ─────────────────────────────────────────────────────────────
+    // LIFECYCLE
+    // ─────────────────────────────────────────────────────────────
+
     private void Start()
     {
-        // Проверка интернета перед входом
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
             Debug.LogError("Нет сети! Вход невозможен.");
-            return; 
+            return;
         }
-        Login(); // <--- АВТОМАТИЧЕСКИЙ ВЫЗОВ
+        Login();
     }
-    // 1. Вход
+
+    // ─────────────────────────────────────────────────────────────
+    // 1. ВХІД
+    // ─────────────────────────────────────────────────────────────
+
     public void Login()
     {
-        var request = new LoginWithCustomIDRequest {
+        var request = new LoginWithCustomIDRequest
+        {
             CustomId = SystemInfo.deviceUniqueIdentifier,
             CreateAccount = true
         };
-        PlayFabClientAPI.LoginWithCustomID(request, result => {
+        PlayFabClientAPI.LoginWithCustomID(request, result =>
+        {
             LocalPlayFabId = result.PlayFabId;
-            LoadTitleData(); // Сначала грузим общие настройки
+            LoadTitleData();
         }, OnError);
     }
 
-    // 2. Загрузка настроек сервера (Цены, Шансы)
+    // ─────────────────────────────────────────────────────────────
+    // 2. TITLE DATA (налаштування сервера: ціни, шанси)
+    // ─────────────────────────────────────────────────────────────
+
     private void LoadTitleData()
     {
-        PlayFabClientAPI.GetTitleData(new GetTitleDataRequest(), result => {
-            if (result.Data.TryGetValue("OreSettings", out var oresJson)) {
-            
-                // 1. Превращаем JSON-строку в Словарь
+        PlayFabClientAPI.GetTitleData(new GetTitleDataRequest(), result =>
+        {
+            if (result.Data.TryGetValue("OreSettings", out var oresJson))
+            {
                 var parsedOres = JsonConvert.DeserializeObject<Dictionary<string, OreServerData>>(oresJson);
-            
-                // 2. Передаем готовый словарь в менеджер (через Instance, т.к. метод не статический)
                 GameDataManager.Instance.UpdateOresData(parsedOres);
             }
-            if (result.Data.TryGetValue("UpgradeSettings", out var upgradesJson)) {
-            
-                // 1. Превращаем JSON-строку в Словарь
+            if (result.Data.TryGetValue("UpgradeSettings", out var upgradesJson))
+            {
                 var parsedUpgrades = JsonConvert.DeserializeObject<Dictionary<string, UpgradeServerData>>(upgradesJson);
-            
-                // 2. Передаем готовый словарь в менеджер (через Instance, т.к. метод не статический)
                 GameDataManager.Instance.UpdateUpgradesData(parsedUpgrades);
             }
-            
-            
-        
-            LoadPlayerData(); // Грузим игрока
+            LoadPlayerData();
         }, OnError);
     }
 
-    // 3. Загрузка данных игрока (Деньги, Инвентарь)
+    // ─────────────────────────────────────────────────────────────
+    // 3. ЗАВАНТАЖЕННЯ ДАНИХ ГРАВЦЯ
+    // ─────────────────────────────────────────────────────────────
+
     private void LoadPlayerData()
     {
         Debug.Log($"<color=cyan>LoadPlayerData()</color> <b>Start</b>");
-        PlayFabClientAPI.GetUserData(new GetUserDataRequest(), result => {
-            if (result.Data.TryGetValue("PlayerData", out var record)) {
-                // Если данные есть, десериализуем JSON в наш класс
-                var data = JsonConvert.DeserializeObject<PlayerData>(record.Value);
-                Debug.Log($"<color=cyan>LoadPlayerData()</color> PlayerData: {data}");
-                GameDataManager.Instance.UpdatePlayerData(data);
-            } else {
-                // Если данных нет (новый игрок), инициализируем пустые
-                Debug.Log("Новый игрок! Создаем стартовый профиль...");
-                var freshData = new PlayerData(); 
+
+        PlayFabClientAPI.GetUserData(new GetUserDataRequest { Keys = AllKeys }, result =>
+        {
+            var data = result.Data;
+
+            // Новий гравець — профіль ще не створено
+            if (!data.ContainsKey(KeyProfile))
+            {
+                Debug.Log("Новий гравець! Створюємо стартовий профіль...");
+                var freshData = new PlayerData();
                 GameDataManager.Instance.UpdatePlayerData(freshData);
-                SavePlayerData(freshData); // Сразу сохраняем дефолт на сервер
+                SavePlayerData(freshData);
             }
+            else
+            {
+                var playerData = AssemblePlayerData(data);
+                Debug.Log($"<color=cyan>LoadPlayerData()</color> PlayerData: {playerData}");
+                GameDataManager.Instance.UpdatePlayerData(playerData);
+            }
+
             Debug.Log($"<color=cyan>LoadPlayerData()</color> <b>Success</b>");
             GameDataManager.Instance.OnDataLoaded?.Invoke();
         }, OnError);
+
         Debug.Log($"<color=cyan>LoadPlayerData()</color> <b>Finish</b>");
-        
     }
 
-    private void OnError(PlayFabError error) => Debug.LogError(error.GenerateErrorReport());
+    /// <summary>
+    /// Збирає <see cref="PlayerData"/> з окремих UserData-записів.
+    /// Будь-який відсутній ключ замінюється дефолтним значенням.
+    /// </summary>
+    private static PlayerData AssemblePlayerData(Dictionary<string, UserDataRecord> data)
+    {
+        var pd = new PlayerData();
 
-    // Статический метод для сохранения (вызывай его из любого места)
+        if (data.TryGetValue(KeyProfile, out var profileRec))
+        {
+            var profile = JsonConvert.DeserializeObject<ProfileSaveData>(profileRec.Value);
+            if (profile != null)
+                pd.playerName = profile.playerName;
+        }
+
+        if (data.TryGetValue(KeyStats, out var statsRec))
+        {
+            var stats = JsonConvert.DeserializeObject<StatsSaveData>(statsRec.Value);
+            if (stats != null)
+            {
+                pd.score        = stats.score;
+                pd.money        = stats.money;
+                pd.blocksBroken = stats.blocksBroken;
+                pd.damage       = stats.damage;
+            }
+        }
+
+        if (data.TryGetValue(KeyOresInventory, out var oresRec))
+            pd.OresInventory = JsonConvert.DeserializeObject<Dictionary<string, int>>(oresRec.Value)
+                               ?? new Dictionary<string, int>();
+
+        if (data.TryGetValue(KeyRefinedInventory, out var refinedRec))
+            pd.RefinedInventory = JsonConvert.DeserializeObject<Dictionary<string, int>>(refinedRec.Value)
+                                  ?? new Dictionary<string, int>();
+
+        if (data.TryGetValue(KeyUpgrades, out var upgradesRec))
+            pd.Upgrades = JsonConvert.DeserializeObject<Dictionary<string, int>>(upgradesRec.Value)
+                          ?? new Dictionary<string, int>();
+
+        if (data.TryGetValue(KeyCraftState, out var craftStateRec))
+            pd.equipmentCraftState = JsonConvert.DeserializeObject<EquipmentCraftState>(craftStateRec.Value)
+                                     ?? new EquipmentCraftState();
+
+        if (data.TryGetValue(KeyEquipInventory, out var equipInvRec))
+            pd.equipmentInventory = JsonConvert.DeserializeObject<List<EquipmentItem>>(equipInvRec.Value)
+                                    ?? new List<EquipmentItem>();
+
+        if (data.TryGetValue(KeyEquippedItems, out var equippedRec))
+            pd.equippedItems = JsonConvert.DeserializeObject<Dictionary<EquipmentType, EquipmentItem>>(equippedRec.Value)
+                               ?? new Dictionary<EquipmentType, EquipmentItem>();
+
+        if (data.TryGetValue(KeyCraftSlots, out var craftSlotsRec))
+            pd.craftSlots = JsonConvert.DeserializeObject<List<PlayerData.FurnaceSlotData>>(craftSlotsRec.Value)
+                            ?? new List<PlayerData.FurnaceSlotData>();
+
+        return pd;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // 4. ЗБЕРЕЖЕННЯ ДАНИХ ГРАВЦЯ
+    // ─────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Зберігає всі дані гравця в PlayFab UserData, кожну секцію окремим ключем.
+    /// </summary>
     public static void SavePlayerData(PlayerData data)
     {
-        var json = JsonConvert.SerializeObject(data);
-        var request = new UpdateUserDataRequest {
-            Data = new Dictionary<string, string> { { "PlayerData", json } }
+        var saveData = new Dictionary<string, string>
+        {
+            [KeyProfile]          = JsonConvert.SerializeObject(new ProfileSaveData { playerName = data.playerName }),
+            [KeyStats]            = JsonConvert.SerializeObject(new StatsSaveData
+            {
+                score        = data.score,
+                money        = data.money,
+                blocksBroken = data.blocksBroken,
+                damage       = data.damage
+            }),
+            [KeyOresInventory]    = JsonConvert.SerializeObject(data.OresInventory),
+            [KeyRefinedInventory] = JsonConvert.SerializeObject(data.RefinedInventory),
+            [KeyUpgrades]         = JsonConvert.SerializeObject(data.Upgrades),
+            [KeyCraftState]       = JsonConvert.SerializeObject(data.equipmentCraftState),
+            [KeyEquipInventory]   = JsonConvert.SerializeObject(data.equipmentInventory),
+            [KeyEquippedItems]    = JsonConvert.SerializeObject(data.equippedItems),
+            [KeyCraftSlots]       = JsonConvert.SerializeObject(data.craftSlots),
         };
-        PlayFabClientAPI.UpdateUserData(request, r => Debug.Log("Сохранено"), OnErrorStatic);
+
+        var request = new UpdateUserDataRequest { Data = saveData };
+        PlayFabClientAPI.UpdateUserData(request, _ => Debug.Log("Збережено"), OnErrorStatic);
     }
 
+    // ─────────────────────────────────────────────────────────────
+    // HELPERS
+    // ─────────────────────────────────────────────────────────────
+
+    private void OnError(PlayFabError error) => Debug.LogError(error.GenerateErrorReport());
     private static void OnErrorStatic(PlayFabError error) => Debug.LogError(error.GenerateErrorReport());
+
+    // Дані профілю — зберігається під KeyProfile
+    [Serializable]
+    private class ProfileSaveData
+    {
+        public string playerName;
+    }
+
+    // Основні числові характеристики — зберігаються під KeyStats
+    [Serializable]
+    private class StatsSaveData
+    {
+        public int score;
+        public int money;
+        public int blocksBroken;
+        public int damage;
+    }
 }

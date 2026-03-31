@@ -8,8 +8,8 @@ public class PlayerData
 {
     public int score = 0;
     public int money = 0;
+    public int damage = 0;
     public int blocksBroken = 0;
-    public int damage = 1;
     public string playerName;
     // Ключ — ID руды, значение — количество
     public Dictionary<string, int> OresInventory = new Dictionary<string, int>();
@@ -20,7 +20,7 @@ public class PlayerData
     public EquipmentCraftState equipmentCraftState = new EquipmentCraftState();
 
     /// <summary>Инвентарь предметов экипировки, полученных через крафт.</summary>
-    public List<EquipmentCraft.EquipmentItem> equipmentInventory = new List<EquipmentCraft.EquipmentItem>();
+    public List<EquipmentItem> equipmentInventory = new List<EquipmentItem>();
 
     /// <summary>Экипированные предметы по типам (только по 1 предмету каждого типа).</summary>
     public Dictionary<EquipmentType, EquipmentItem> equippedItems = new Dictionary<EquipmentType, EquipmentItem>();
@@ -39,6 +39,7 @@ public class PlayerData
     {
         score = 0;
         money = 0;
+        damage = 1;
         playerName = "NewbieMiner";
     }
 
