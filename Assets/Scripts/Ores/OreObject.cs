@@ -116,6 +116,7 @@ public class OreObject : MonoBehaviour, IPointerDownHandler
         
         // Тут можно добавить руду в инвентарь
         GameDataManager.Instance.AddOre(_data.oreId, 1);
+        GameDataManager.Instance.AddScore(1);
 
         // Выключаем объект
         gameObject.SetActive(false);

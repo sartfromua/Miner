@@ -7,7 +7,12 @@ using UnityEngine;
 
 public class PlayFabService : MonoBehaviour
 {
-    
+    /// <summary>
+    /// PlayFab ID поточного гравця. Заповнюється після логіну.
+    /// Використовується для визначення власних лістингів на маркеті.
+    /// </summary>
+    public static string LocalPlayFabId { get; private set; }
+
     private void Start()
     {
         // Проверка интернета перед входом
@@ -26,6 +31,7 @@ public class PlayFabService : MonoBehaviour
             CreateAccount = true
         };
         PlayFabClientAPI.LoginWithCustomID(request, result => {
+            LocalPlayFabId = result.PlayFabId;
             LoadTitleData(); // Сначала грузим общие настройки
         }, OnError);
     }

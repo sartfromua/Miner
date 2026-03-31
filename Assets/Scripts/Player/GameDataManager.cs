@@ -115,7 +115,7 @@ public partial class GameDataManager : MonoBehaviour
         OnDataUpdated?.Invoke(); // Уведомляем игру, что цифры изменились
         OnUpgradesUpdated?.Invoke();
     }
-    
+
     public int GetUpgradePrice(UpgradeName upgradeName)
     {
         var upgradeData = upgradesDataBase.GetUpgradeInfoByName(upgradeName);
@@ -149,6 +149,9 @@ public partial class GameDataManager : MonoBehaviour
             if (!playerData.Upgrades.TryAdd(upgradeName, 1))
                 playerData.Upgrades[upgradeName] += 1;
 
+            GameDataManager.Instance.AddScore(25);
+
+
             // 4. Сообщаем всем, что данные изменились (UI обновится сам)
             OnDataUpdated?.Invoke();
             OnUpgradesUpdated?.Invoke();
@@ -170,6 +173,22 @@ public partial class GameDataManager : MonoBehaviour
     #endregion
 
     #region ====== КОНСТАНТЫ ПОСЛЕ АПГРЕЙДОВ ======
+
+    public int GetBrokenBlocks()
+    {
+        return playerData.blocksBroken;
+    }
+    
+    public int GetMoney()
+    {
+        return playerData.money;
+    }
+    
+    public int GetScore()
+    {
+        return playerData.score;
+    }
+    
     public int GetDamage()
     {
         var totalDamage = 1;
@@ -272,11 +291,23 @@ public partial class GameDataManager : MonoBehaviour
         float equipmentBonus = GetEquipmentStat("5");
         return upgradeMultiplier * (1f + equipmentBonus);
     }
-    
+
     #endregion
 
     #region ====== ВЗАИМОДЕЙСТВИЕ С ДАННЫМИ ИГРОКА ======
-    
+
+    public void AddScore(int score)
+    {
+        playerData.score += score;
+        OnDataUpdated?.Invoke();
+    }
+
+    public int GetOrePrice(string oreId)
+    {
+        var ore = oreDataBase.allOres.Find(x => x.oreId == oreId);
+        return (int)(ore.price * GetSellingOreMultiplier());
+    }
+
     public void SellOre(string oreId, int amount, int pricePerUnit)
     {
         if (!playerData.OresInventory.TryGetValue(oreId, out var currentAmount)) return;
@@ -292,7 +323,7 @@ public partial class GameDataManager : MonoBehaviour
         // 3. Сообщаем всем, что данные изменились (UI обновится сам)
         OnDataUpdated?.Invoke();
     }
-    
+
     public void AddMoney(int amount)
     {
         playerData.money += amount;
@@ -314,7 +345,7 @@ public partial class GameDataManager : MonoBehaviour
     }
 
     #endregion
-    
+
     #region ====== ОФФЛАЙН КРАФТ ======
 
     /// <summary>
@@ -353,7 +384,8 @@ public partial class GameDataManager : MonoBehaviour
 
         playerData.OresInventory[inputOreId] -= inputAmount;
 
-        slot.startTimeUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();;
+        slot.startTimeUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        ;
         OnDataUpdated?.Invoke();
         return true;
     }
@@ -391,6 +423,7 @@ public partial class GameDataManager : MonoBehaviour
         // Здесь duration не нужен, т.к. проверка уже в IsCraftReady
         if (!playerData.RefinedInventory.TryAdd(outputOreId, outputAmount))
             playerData.RefinedInventory[outputOreId] += outputAmount;
+        GameDataManager.Instance.AddScore(5);
 
         slot.startTimeUnix = 0; // сбрасываем
         OnDataUpdated?.Invoke();

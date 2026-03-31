@@ -99,6 +99,9 @@ namespace Ui
 
                     if (detailPanel)
                         frameUI.detailPanel = detailPanel;
+
+                    // Позначаємо фрейм як інвентарний — в деталях з'явиться кнопка Sell
+                    frameUI.isInventoryItem = true;
                 }
 
                 frameSlots.Add(frameUI);

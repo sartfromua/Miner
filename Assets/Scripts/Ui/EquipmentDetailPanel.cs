@@ -35,9 +35,15 @@ namespace Ui
         [Tooltip("Кнопка закрытия панели")]
         public Button closeButton;
 
+        [Tooltip("Кнопка виставлення на продаж — видима лише при відкритті з інвентаря")]
+        public Button sellButton;
+
         [Header("References")]
         [Tooltip("База данных иконок типов экипировки")]
         public EquipmentIconDatabase iconDatabase;
+
+        [Tooltip("Модальне вікно для вводу ціни та підтвердження продажу")]
+        public SellEquipmentModal sellModal;
 
         private EquipmentItem currentItem;
         private GameObject currentFrameInstance;
@@ -55,6 +61,9 @@ namespace Ui
             if (closeButton)
                 closeButton.onClick.AddListener(OnCloseButtonClicked);
 
+            if (sellButton)
+                sellButton.onClick.AddListener(OnSellButtonClicked);
+
             isInitialized = true;
             Debug.Log("[EquipmentDetailPanel] Initialized");
         }
@@ -62,7 +71,15 @@ namespace Ui
         /// <summary>
         /// Показывает панель с информацией о предмете.
         /// </summary>
-        public void Show(EquipmentItem item)
+        /// <param name="item">Предмет для відображення</param>
+        /// <param name="fromInventory">
+        /// true — панель відкрита з інвентаря, показуємо кнопку "Sell".
+        /// false — відкрита з крафту, маркету або екіпірованих слотів, кнопка прихована.
+        /// </param>
+        /// <param name="showEquipButton">
+        /// false — приховує кнопку Equip (наприклад, при перегляді предмета на маркеті).
+        /// </param>
+        public void Show(EquipmentItem item, bool fromInventory = false, bool showEquipButton = true)
         {
             if (item == null)
             {
@@ -109,8 +126,16 @@ namespace Ui
                 itemStatsText.text = statsString.TrimEnd();
             }
 
-            // Обновляем текст кнопки экипировки
-            UpdateEquipButton();
+            // Кнопка екіпірування — прихована на маркеті
+            if (equipButton)
+                equipButton.gameObject.SetActive(showEquipButton);
+
+            if (showEquipButton)
+                UpdateEquipButton();
+
+            // Кнопка продажу видима тільки з інвентаря
+            if (sellButton)
+                sellButton.gameObject.SetActive(fromInventory);
 
             gameObject.SetActive(true);
             Debug.Log($"[EquipmentDetailPanel] SetActive(true) виконано. Новий статус: {gameObject.activeSelf}");
@@ -219,6 +244,13 @@ namespace Ui
             }
         }
 
+        private void OnSellButtonClicked()
+        {
+            if (currentItem == null || sellModal == null) return;
+
+            sellModal.Show(currentItem, onSuccess: Hide);
+        }
+
         private void OnCloseButtonClicked()
         {
             Hide();
@@ -243,7 +275,7 @@ namespace Ui
                 else
                 {
                     // Другой предмет этого типа экипирован - будет заменён
-                    equipButtonText.text = "Replace & Equip";
+                    equipButtonText.text = "Replace";
                 }
             }
             else

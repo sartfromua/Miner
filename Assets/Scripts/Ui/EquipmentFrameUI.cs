@@ -25,6 +25,12 @@ namespace Ui
         [Tooltip("Панель детального просмотра предмета")]
         public EquipmentDetailPanel detailPanel;
 
+        [Tooltip("true — фрейм є частиною інвентаря гравця, тому в деталях показується кнопка Sell")]
+        public bool isInventoryItem = false;
+
+        [Tooltip("false — приховує кнопку Equip у DetailPanel (наприклад, на маркеті)")]
+        public bool showEquipButton = true;
+
         [Header("UI Elements")]
         [Tooltip("Image для отображения иконки предмета")]
         public Image iconImage;
@@ -165,11 +171,9 @@ namespace Ui
         /// </summary>
         private void OnClicked()
         {
-            // Открываем панель только если есть предмет
-            if (currentItem != null && detailPanel != null)
-            {
-                detailPanel.Show(currentItem);
-            }
+            if (currentItem == null || detailPanel == null) return;
+
+            detailPanel.Show(currentItem, fromInventory: isInventoryItem, showEquipButton: showEquipButton);
         }
     }
 }

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d13c9e02eb21401a8b0f07f6594fa5e6, type: 3}
   m_Name: AutoSmelt
   m_EditorClassIdentifier: 
-  name: 
-  price: 0
-  maxLevel: 0
+  name: AutoSmelt
+  price: 200
+  maxLevel: 8

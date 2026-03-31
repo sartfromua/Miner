@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
     [Header("Texts")]
-    public Text moneyText;
-    public Text blocksText;
-    public Text scoreText;
+    public TextMeshProUGUI moneyText;
+    public TextMeshProUGUI blocksText;
+    public TextMeshProUGUI scoreText;
     
     [Header("Game Panels")]
     public List<GameObject> panels;
@@ -64,8 +65,8 @@ public class UIController : MonoBehaviour
     }
 
     private void RefreshUI() {
-        moneyText.text = $"Money: {GameDataManager.Instance.playerData.money}";
-        blocksText.text = $"Blocks: {GameDataManager.Instance.playerData.blocksBroken}";
-        scoreText.text = $"Score: {GameDataManager.Instance.playerData.score}";
+        moneyText.text = $"{GameDataManager.Instance.GetMoney()}";
+        blocksText.text = $"{GameDataManager.Instance.GetBrokenBlocks()}";
+        scoreText.text = $"{GameDataManager.Instance.GetScore()}";
     }
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using EquipmentCraft;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public partial class GameDataManager
 {
@@ -145,6 +147,16 @@ public partial class GameDataManager
 
         // Сохраняем в инвентарь игрока
         playerData.equipmentInventory.Add(item);
+        var score = item.rarity switch
+        {
+            1 => 10,
+            2 => 25,
+            3 => 50,
+            4 => 100,
+            5 => 250,
+            _ => 0
+        };
+        GameDataManager.Instance.AddScore(score);
 
         // Сбрасываем состояние крафта
         state.craftStartTimeUnix = 0;

@@ -22,11 +22,12 @@ namespace Shop.SellingOres
         {
             _data = data;
             _currentAmount = currentAmount;
+            var price = GameDataManager.Instance.GetOrePrice(data.oreId); 
 
             // 1. Заполняем визуал
             iconImage.sprite = data.icon;
             // nameText.text = data.oreId; // Или data.displayName, если есть
-            priceText.text = $"Цена: {data.price}";
+            priceText.text = $"Price: {price}";
             amountText.text = $"x{currentAmount}";
 
             // 2. Настраиваем кнопки
