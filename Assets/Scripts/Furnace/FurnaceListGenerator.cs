@@ -7,13 +7,12 @@ namespace Furnace
 {
     public class FurnaceListGenerator : MonoBehaviour
     {
-        [Header("Ссылки")]
+        [Header("References")]
         [SerializeField] private GameObject furnaceSlotPrefab;      // префаб с FurnaceSlotController
         [SerializeField] private Transform contentParent;       // VerticalLayoutGroup или его Content
 
-        [Header("Базы данных")]
-        [SerializeField] private RefinedDatabase refinedDatabase;   // ScriptableObject с рецептами
-        [SerializeField] private OreDatabase oreDatabase;           // для иконок входных руд (опционально)
+        private RefinedDatabase refinedDatabase => GameDataManager.Instance?.refinedDataBase;
+        private OreDatabase oreDatabase => GameDataManager.Instance?.oreDataBase;
 
         private readonly Dictionary<string, FurnaceSlotController> activeStations 
             = new Dictionary<string, FurnaceSlotController>();

@@ -22,7 +22,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b3f29af6bd0ae854c811b086d635a2cd, type: 2}
   - {fileID: 11400000, guid: 8697fb366c82d6244b162428c5486a57, type: 2}
   spawnCurve:
-    leftSpread: 2
-    rightSpread: 0.5
-    peakShiftPerLevel: 1
-    basePeak: 1
+    leftSpread: 0
+    rightSpread: 1
+    peakShiftPerLevel: 1.5
+    basePeak: 0.4
