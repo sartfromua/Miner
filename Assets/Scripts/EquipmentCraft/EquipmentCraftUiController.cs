@@ -238,8 +238,8 @@ namespace EquipmentCraft
             var state = GetState();
             if (state == null || Manager == null) return;
 
-            int totalAdded = 0;
-            int oreTypesAdded = 0;
+            var totalAdded = 0;
+            var oreTypesAdded = 0;
 
             // Добавляем руду пока есть что добавлять
             while (true)
@@ -250,15 +250,15 @@ namespace EquipmentCraft
                     break; // Крафт заполнен
 
                 // Получаем количество, которое нужно добавить для этой руды
-                int neededAmount = state.GetNextOreAmount();
+                var neededAmount = state.GetNextOreAmount();
 
                 // Проверяем сколько этой руды есть у игрока
-                int availableAmount = Manager.GetRefinedOreAmount(nextOreId);
+                var availableAmount = Manager.GetRefinedOreAmount(nextOreId);
 
                 if (availableAmount >= neededAmount)
                 {
                     // Есть достаточно - добавляем необходимое количество
-                    for (int j = 0; j < neededAmount; j++)
+                    for (var j = 0; j < neededAmount; j++)
                     {
                         if (!Manager.PutRefinedOreToCraft(1))
                             break;
@@ -275,7 +275,7 @@ namespace EquipmentCraft
                 else if (availableAmount > 0)
                 {
                     // Меньше чем нужно - добавляем сколько есть и прерываем
-                    for (int j = 0; j < availableAmount; j++)
+                    for (var j = 0; j < availableAmount; j++)
                     {
                         if (!Manager.PutRefinedOreToCraft(1))
                             break;
@@ -316,17 +316,17 @@ namespace EquipmentCraft
             if (state == null || Manager == null) return;
 
             // Логирование количества руды в крафте перед стартом
-            int totalOres = state.storedAmount;
-            int oreTypes = (totalOres / state.amountPerOre) + ((totalOres % state.amountPerOre > 0) ? 1 : 0);
+            var totalOres = state.storedAmount;
+            var oreTypes = (totalOres / state.amountPerOre) + ((totalOres % state.amountPerOre > 0) ? 1 : 0);
 
             Debug.Log($"[EquipmentCraft] Запуск крафта с {totalOres} руды ({oreTypes} типов, по {state.amountPerOre} на тип)");
 
             // Детальный лог по каждому типу руды
-            int currentAmount = totalOres;
-            for (int i = 0; i < Manager.oreDataBase.allOres.Count && currentAmount > 0; i++)
+            var currentAmount = totalOres;
+            for (var i = 0; i < Manager.oreDataBase.allOres.Count && currentAmount > 0; i++)
             {
                 var oreId = Manager.oreDataBase.allOres[i].oreId;
-                int oreCount = UnityEngine.Mathf.Min(currentAmount, state.amountPerOre);
+                var oreCount = UnityEngine.Mathf.Min(currentAmount, state.amountPerOre);
                 Debug.Log($"  - {oreId}: {oreCount} шт.");
                 currentAmount -= oreCount;
             }

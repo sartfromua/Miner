@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Ui;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -15,6 +17,12 @@ public class UIController : MonoBehaviour
     
     [Header("Game Panels Buttons")]
     public List<Button> panelButtons;
+    
+    [Header("Windows (opens new)")]
+    public List<GameObject> windows;
+    
+    [Header("Buttons (opens new)")]
+    public List<Button> windowButtons;
     
     private void Start()
     {
@@ -34,6 +42,15 @@ public class UIController : MonoBehaviour
             panelButtons[i].onClick.AddListener(() => 
             {
                 OpenPanel(index); 
+            });
+        }
+        for (var i = 0; i < windowButtons.Count; i++)
+        {
+            var index = i; // ОЧЕНЬ ВАЖНО: создаем копию переменной для замыкания (lambda capture)
+            
+            windowButtons[i].onClick.AddListener(() => 
+            {
+                OpenWindow(index); 
             });
         }
     }
@@ -61,6 +78,18 @@ public class UIController : MonoBehaviour
                 panels[i].SetActive(true);
                 return;
             }
+        }
+    }
+    
+    private void OpenWindow(int windowIndex)
+    {
+        try
+        {
+            windows[windowIndex].SetActive(true);
+        }
+        catch (Exception)
+        {
+            Debug.LogError($"Failed to open window with index {windowIndex}");
         }
     }
 

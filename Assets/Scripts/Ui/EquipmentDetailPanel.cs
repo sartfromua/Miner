@@ -210,12 +210,12 @@ namespace Ui
 
             // Проверяем, экипирован ли этот предмет
             var equippedItem = GameDataManager.Instance.GetEquippedItem(currentItem.type);
-            bool isThisItemEquipped = equippedItem == currentItem;
+            var isThisItemEquipped = equippedItem == currentItem;
 
             if (isThisItemEquipped)
             {
                 // Снимаем предмет
-                bool success = GameDataManager.Instance.UnequipItem(currentItem.type);
+                var success = GameDataManager.Instance.UnequipItem(currentItem.type);
 
                 if (success)
                 {
@@ -230,7 +230,7 @@ namespace Ui
             else
             {
                 // Экипируем предмет
-                bool success = GameDataManager.Instance.EquipItem(currentItem);
+                var success = GameDataManager.Instance.EquipItem(currentItem);
 
                 if (success)
                 {
@@ -262,7 +262,7 @@ namespace Ui
                 return;
 
             // Проверяем, экипирован ли уже предмет этого типа
-            bool isTypeEquipped = GameDataManager.Instance.IsEquipped(currentItem.type);
+            var isTypeEquipped = GameDataManager.Instance.IsEquipped(currentItem.type);
 
             if (isTypeEquipped)
             {

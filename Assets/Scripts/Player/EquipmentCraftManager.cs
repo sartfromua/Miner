@@ -128,12 +128,12 @@ public partial class GameDataManager
         }
 
         var state = EquipmentCraftState();
-        int resourcesSpent = state.storedAmount;
-        float rarityMultiplier = state.craftRarityMultiplier;
+        var resourcesSpent = state.storedAmount;
+        var rarityMultiplier = state.craftRarityMultiplier;
 
         // Добавляем бонус от экипировки (statId: 2 = Craft Chance Multiplier)
         // Формула: 1 + бонус (например, 0.1, 0.2, 0.3 и т.д.)
-        float equipmentCraftBonus = GetEquipmentStat("2");
+        var equipmentCraftBonus = GetEquipmentStat("2");
         rarityMultiplier *= (1f + equipmentCraftBonus);
 
         // Генерируем предмет

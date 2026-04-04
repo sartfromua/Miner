@@ -53,7 +53,7 @@ public class OreObject : MonoBehaviour, IPointerDownHandler
         // Автоматический урон раз в секунду
         if (GameDataManager.Instance != null)
         {
-            float autoPickaxeDamage = GameDataManager.Instance.GetAutoPickaxeDamage();
+            var autoPickaxeDamage = GameDataManager.Instance.GetAutoPickaxeDamage();
 
             if (autoPickaxeDamage > 0)
             {

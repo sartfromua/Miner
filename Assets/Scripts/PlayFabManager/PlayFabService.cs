@@ -187,7 +187,7 @@ public class PlayFabService : MonoBehaviour
     /// <summary>
     /// Зберігає всі дані гравця в PlayFab UserData, кожну секцію окремим ключем.
     /// </summary>
-    public static void SavePlayerData(PlayerData data)
+    public static void SavePlayerData(PlayerData data, Action onSuccess = null, Action<string> onError = null)
     {
         var saveData = new Dictionary<string, string>
         {
@@ -209,14 +209,106 @@ public class PlayFabService : MonoBehaviour
         };
 
         var request = new UpdateUserDataRequest { Data = saveData };
-        PlayFabClientAPI.UpdateUserData(request, _ => Debug.Log("Збережено"), OnErrorStatic);
+        PlayFabClientAPI.UpdateUserData(request, _ =>
+        {
+            Debug.Log("Збережено");
+            // Статистики для лідерборду оновлюються через CloudScript (SyncLeaderboardStats handler)
+            SyncLeaderboardStatisticsViaCloudScript(data);
+            onSuccess?.Invoke();
+        }, error =>
+        {
+            OnErrorStatic(error);
+            onError?.Invoke(error.ErrorMessage);
+        });
+    }
+
+    /// <summary>
+    /// Синхронізує score/money/blocksBroken у PlayFab Statistics через CloudScript.
+    /// CloudScript має Server API доступ — не потребує клієнтських дозволів.
+    /// </summary>
+    private static void SyncLeaderboardStatisticsViaCloudScript(PlayerData data)
+    {
+        var request = new ExecuteCloudScriptRequest
+        {
+            FunctionName = "SyncLeaderboardStats",
+            FunctionParameter = new
+            {
+                score        = data.score,
+                money        = data.money,
+                blocksBroken = data.blocksBroken
+            },
+            GeneratePlayStreamEvent = false
+        };
+        PlayFabClientAPI.ExecuteCloudScript(request,
+            _ => Debug.Log("Leaderboard stats synced"),
+            OnErrorStatic);
+    }
+
+    /// <summary>
+    /// Оновлює відображуване ім'я гравця на PlayFab (використовується в лідерборді).
+    /// Викликати явно після зміни нікнейму.
+    /// </summary>
+    public static void SetDisplayName(string name, Action onSuccess = null, Action<string> onError = null)
+    {
+        var request = new UpdateUserTitleDisplayNameRequest { DisplayName = name };
+        PlayFabClientAPI.UpdateUserTitleDisplayName(request,
+            _ =>
+            {
+                Debug.Log($"DisplayName оновлено: {name}");
+                onSuccess?.Invoke();
+            },
+            error =>
+            {
+                OnErrorStatic(error);
+                onError?.Invoke(error.ErrorMessage);
+            });
     }
 
     // ─────────────────────────────────────────────────────────────
     // HELPERS
     // ─────────────────────────────────────────────────────────────
+    
+    private void OnError(PlayFabError error)
+    {
+        Debug.Log($"HttpCode: {error.HttpCode}, Error: {error.Error}, ErrorMessage: {error.ErrorMessage}");
+        if (error.HttpCode == 409)
+        {
+            Debug.LogWarning("Account already exists — logging in without CreateAccount...");
+        
+            var request = new LoginWithCustomIDRequest
+            {
+                CustomId = PlayerPrefs.GetString("CustomId", SystemInfo.deviceUniqueIdentifier),
+                CreateAccount = false // ← просто логінимось в існуючий
+            };
+        
+            PlayFabClientAPI.LoginWithCustomID(request, result =>
+            {
+                LocalPlayFabId = result.PlayFabId;
+                LoadTitleData();
+            }, error => Debug.LogError(error.GenerateErrorReport()));
+        }
+        else
+        {
+            Debug.LogError(error.GenerateErrorReport());
+        }
+    }
+    
+    private string GenerateFreshCustomId()
+    {
+        var deviceId = SystemInfo.deviceUniqueIdentifier;
 
-    private void OnError(PlayFabError error) => Debug.LogError(error.GenerateErrorReport());
+        // deviceUniqueIdentifier може повертати "00000000..." на деяких пристроях
+        if (string.IsNullOrEmpty(deviceId) || deviceId == SystemInfo.unsupportedIdentifier)
+        {
+            deviceId = Guid.NewGuid().ToString("N");
+        }
+
+        // Додаємо суфікс, щоб уникнути колізії якщо той самий пристрій
+        // реєструється повторно після видалення акаунта
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+        return $"player_{deviceId}_{suffix}";
+    }
+    
     private static void OnErrorStatic(PlayFabError error) => Debug.LogError(error.GenerateErrorReport());
 
     // Дані профілю — зберігається під KeyProfile

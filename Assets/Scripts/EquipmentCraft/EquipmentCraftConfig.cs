@@ -52,7 +52,7 @@ namespace EquipmentCraft
         /// </summary>
         public int GetBaseRarity(int resourcesSpent)
         {
-            int result = 1;
+            var result = 1;
             foreach (var threshold in rarityThresholds)
             {
                 if (resourcesSpent >= threshold.minResources && threshold.rarityLevel > result)
@@ -66,7 +66,7 @@ namespace EquipmentCraft
         /// </summary>
         public float GetStatMultiplier(int rarity)
         {
-            int index = Mathf.Clamp(rarity - 1, 0, statMultipliers.Length - 1);
+            var index = Mathf.Clamp(rarity - 1, 0, statMultipliers.Length - 1);
             return statMultipliers[index];
         }
     }

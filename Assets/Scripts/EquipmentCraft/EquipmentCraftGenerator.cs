@@ -31,17 +31,17 @@ namespace EquipmentCraft
             }
 
             // 1. Базовая редкость по ресурсам
-            int baseRarity = config.GetBaseRarity(resourcesSpent);
+            var baseRarity = config.GetBaseRarity(resourcesSpent);
 
             // 2. Применяем множитель редкости крафта и округляем
-            float effectiveRarityF = baseRarity * Mathf.Max(1f, craftRarityMultiplier);
-            int rarity = Mathf.Clamp(Mathf.RoundToInt(effectiveRarityF), 1, 5);
+            var effectiveRarityF = baseRarity * Mathf.Max(1f, craftRarityMultiplier);
+            var rarity = Mathf.Clamp(Mathf.RoundToInt(effectiveRarityF), 1, 5);
 
             // 3. Множитель стата для полученной редкости
-            float statMultiplier = config.GetStatMultiplier(rarity);
+            var statMultiplier = config.GetStatMultiplier(rarity);
 
             // 4. Случайно выбираем от 1 до maxStatsCount статов (без повторений)
-            int statCount = Mathf.Clamp(
+            var statCount = Mathf.Clamp(
                 Random.Range(1, config.maxStatsCount + 1),
                 1,
                 Mathf.Min(config.maxStatsCount, database.allStats.Count));
@@ -84,14 +84,14 @@ namespace EquipmentCraft
         {
             // Копируем список и перемешиваем (Fisher-Yates)
             var pool = new List<EquipmentStatDefinition>(database.allStats);
-            for (int i = pool.Count - 1; i > 0; i--)
+            for (var i = pool.Count - 1; i > 0; i--)
             {
-                int j = Random.Range(0, i + 1);
+                var j = Random.Range(0, i + 1);
                 (pool[i], pool[j]) = (pool[j], pool[i]);
             }
 
             var result = new List<EquipmentStatDefinition>();
-            for (int i = 0; i < count && i < pool.Count; i++)
+            for (var i = 0; i < count && i < pool.Count; i++)
                 result.Add(pool[i]);
 
             return result;

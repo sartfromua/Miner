@@ -89,24 +89,24 @@ namespace Ui
             gridLayout.padding = new RectOffset(paddingLeft, paddingRight, paddingTop, paddingBottom);
 
             // Получаем доступную ширину и высоту контейнера (без padding)
-            float availableWidth = rectTransform.rect.width - paddingLeft - paddingRight;
-            float availableHeight = rectTransform.rect.height - paddingTop - paddingBottom;
+            var availableWidth = rectTransform.rect.width - paddingLeft - paddingRight;
+            var availableHeight = rectTransform.rect.height - paddingTop - paddingBottom;
 
             // Вычитаем пространство для отступов между ячейками
-            float totalSpacingX = spacingX * (columns - 1);
-            float totalSpacingY = spacingY * (rows - 1);
+            var totalSpacingX = spacingX * (columns - 1);
+            var totalSpacingY = spacingY * (rows - 1);
 
             availableWidth -= totalSpacingX;
             availableHeight -= totalSpacingY;
 
             // Рассчитываем размер одной ячейки
-            float cellWidth = availableWidth / columns;
-            float cellHeight = availableHeight / rows;
+            var cellWidth = availableWidth / columns;
+            var cellHeight = availableHeight / rows;
 
             // Если нужны квадратные ячейки, берём минимальное значение
             if (keepSquare)
             {
-                float cellSize = Mathf.Min(cellWidth, cellHeight);
+                var cellSize = Mathf.Min(cellWidth, cellHeight);
                 gridLayout.cellSize = new Vector2(cellSize, cellSize);
             }
             else
@@ -115,8 +115,8 @@ namespace Ui
                 if (aspectRatio > 0)
                 {
                     // Проверяем, какое ограничение сильнее
-                    float widthBasedHeight = cellWidth / aspectRatio;
-                    float heightBasedWidth = cellHeight * aspectRatio;
+                    var widthBasedHeight = cellWidth / aspectRatio;
+                    var heightBasedWidth = cellHeight * aspectRatio;
 
                     if (widthBasedHeight <= cellHeight)
                     {

@@ -62,8 +62,8 @@ namespace Furnace
                 return;
 
             var slot = GameDataManager.Instance.GetFurnaceSlot(slotId);
-            bool isCrafting = slot.startTimeUnix > 0;
-            bool isReady = GameDataManager.Instance.IsFurnaceCraftReady(slotId, craftTimeSeconds);
+            var isCrafting = slot.startTimeUnix > 0;
+            var isReady = GameDataManager.Instance.IsFurnaceCraftReady(slotId, craftTimeSeconds);
 
             // Если крафт готов - забираем результат
             if (isReady)

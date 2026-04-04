@@ -121,13 +121,13 @@ public partial class GameDataManager : MonoBehaviour
         var upgradeData = upgradesDataBase.GetUpgradeInfoByName(upgradeName);
         var level = GetUpgradeLevel(upgradeName);
 
-        int basePrice = upgradeData.price * (1 + level);
+        var basePrice = upgradeData.price * (1 + level);
 
         // Применяем скидку от экипировки (statId: 6 = Shop discount)
         // Формула: базовая цена / (1 + бонус скидки)
         // Например: 100 / (1 + 0.1) = 90
-        float discountBonus = GetEquipmentStat("6");
-        int finalPrice = (int)(basePrice / (1f + discountBonus));
+        var discountBonus = GetEquipmentStat("6");
+        var finalPrice = (int)(basePrice / (1f + discountBonus));
 
         return Mathf.Max(1, finalPrice); // Минимальная цена 1
     }
@@ -209,7 +209,7 @@ public partial class GameDataManager : MonoBehaviour
         float upgradeDamage = GetUpgradeLevel(UpgradeName.AutoPickaxe);
 
         // Урон от экипировки (statId: 1 = Auto pickaxe)
-        float equipmentDamage = GetEquipmentStat("1");
+        var equipmentDamage = GetEquipmentStat("1");
 
         return upgradeDamage + equipmentDamage;
     }
@@ -227,14 +227,14 @@ public partial class GameDataManager : MonoBehaviour
     /// </summary>
     public List<string> GetAutoSmeltOreIds()
     {
-        int level = GetAutoSmeltLevel();
+        var level = GetAutoSmeltLevel();
         if (level <= 0 || oreDataBase == null || oreDataBase.allOres == null)
             return new List<string>();
 
         var autoSmeltOres = new List<string>();
-        int count = Mathf.Min(level, oreDataBase.allOres.Count);
+        var count = Mathf.Min(level, oreDataBase.allOres.Count);
 
-        for (int i = 0; i < count; i++)
+        for (var i = 0; i < count; i++)
         {
             autoSmeltOres.Add(oreDataBase.allOres[i].oreId);
         }
@@ -284,11 +284,11 @@ public partial class GameDataManager : MonoBehaviour
     {
         const double multPerLevel = 0.05;
         var level = GetUpgradeLevel(UpgradeName.SellingOresMult);
-        float upgradeMultiplier = (float)(1 + multPerLevel * level);
+        var upgradeMultiplier = (float)(1 + multPerLevel * level);
 
         // Добавляем бонус от экипировки (statId: 5 = Ores Selling price multiplier)
         // Формула: (1 + бонус от апгрейда) * (1 + бонус от экипировки)
-        float equipmentBonus = GetEquipmentStat("5");
+        var equipmentBonus = GetEquipmentStat("5");
         return upgradeMultiplier * (1f + equipmentBonus);
     }
 
@@ -358,7 +358,7 @@ public partial class GameDataManager : MonoBehaviour
         // Получаем бонус от экипировки (statId: 3 = Furnace speed)
         // Формула: базовая длительность / (1 + бонус)
         // Например: 100 сек / (1 + 0.2) = 83.33 сек
-        float speedBonus = GetEquipmentStat("3");
+        var speedBonus = GetEquipmentStat("3");
         return baseDuration / (1f + speedBonus);
     }
 
@@ -396,7 +396,7 @@ public partial class GameDataManager : MonoBehaviour
         if (slot.startTimeUnix == 0) return 0f;
 
         // Применяем бонус скорости печи
-        float adjustedDuration = GetAdjustedFurnaceDuration(durationSeconds);
+        var adjustedDuration = GetAdjustedFurnaceDuration(durationSeconds);
 
         var currentUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         var elapsed = currentUnix - slot.startTimeUnix;
@@ -409,7 +409,7 @@ public partial class GameDataManager : MonoBehaviour
         if (slot.startTimeUnix == 0) return false;
 
         // Применяем бонус скорости печи
-        float adjustedDuration = GetAdjustedFurnaceDuration(durationSeconds);
+        var adjustedDuration = GetAdjustedFurnaceDuration(durationSeconds);
 
         var elapsed = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds - slot.startTimeUnix;
         return elapsed >= (long)adjustedDuration;

@@ -77,10 +77,10 @@ namespace Ui
             }
 
             // Определяем количество слотов
-            int totalSlots = GetTotalSlots();
+            var totalSlots = GetTotalSlots();
 
             // Создаем фиксированное количество слотов
-            for (int i = 0; i < totalSlots; i++)
+            for (var i = 0; i < totalSlots; i++)
             {
                 var frameObject = Instantiate(framePrefab, gridContainer);
                 var frameUI = frameObject.GetComponent<EquipmentFrameUI>();
@@ -149,7 +149,7 @@ namespace Ui
             var equipmentInventory = GameDataManager.Instance.playerData.equipmentInventory;
 
             // Заполняем слоты предметами из инвентаря
-            for (int i = 0; i < frameSlots.Count; i++)
+            for (var i = 0; i < frameSlots.Count; i++)
             {
                 if (i < equipmentInventory.Count)
                 {
